@@ -1,0 +1,42 @@
+# BOTOTOY 2.0 - central configuration.
+# All paths are relative to the project root (the folder that contains this config/ folder).
+
+project:
+  name: "BOTOTOY 2.0"
+  title: "Fruit Detection and Identification Using YOLO"
+  seed: 42
+
+# Class order MUST match the dataset's data.yaml (class id = list index).
+classes: [Apple, Banana, Grape, Orange, Pineapple, Watermelon]
+
+dataset:
+  # Public source (GitHub mirror of the Kaggle dataset). Pinned to a commit for reproducibility.
+  github_repo: "lightly-ai/dataset_fruits_detection"
+  github_commit: "e626559d4a127ea9fc35fedd74c52ee9f378a53d"
+  kaggle_url: "https://www.kaggle.com/datasets/lakshaytyagi01/fruit-detection"
+  license: "CC0-1.0 (LICENSE file in the GitHub mirror)"
+
+  raw_dir: "data/raw/dataset_fruits_detection"   # original download (read-only)
+  processed_dir: "data/processed"                 # final train/val/test folders
+  audit_dir: "data/processed/audit"               # cached CSV tables from the validator
+  splits_dir: "data/splits"                       # committed split manifests (file lists)
+  data_yaml: "data/data.yaml"                     # generated; used by Ultralytics
+  image_extensions: [".jpg", ".jpeg", ".png", ".bmp"]
+
+  validation:
+    # dHash (64-bit perceptual hash) Hamming distance at or below which two images
+    # are treated as near-duplicates. 0 = identical hash.
+    near_duplicate_max_hamming: 4
+
+  split:
+    # Option A (approved): keep the original (augmented) training split, and re-split
+    # the un-augmented original valid + test images ~50/50 into new val/test sets,
+    # giving ~70/15/15 by unique source image.
+    holdout_val_fraction: 0.5
+    # Remove val/test images that are exact or near duplicates of a training image (leakage).
+    exclude_holdout_duplicates_of_train: true
+
+outputs:
+  reports_dir: "outputs/reports"
+  dataset_report_dir: "outputs/reports/dataset"
+  num_sample_visualizations: 24

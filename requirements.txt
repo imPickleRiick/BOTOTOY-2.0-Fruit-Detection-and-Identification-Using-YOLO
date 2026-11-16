@@ -1,0 +1,25 @@
+# BOTOTOY 2.0 - Python 3.12 (tested on Windows 11, CPU only).
+# Install:  python -m pip install -r requirements.txt
+#
+# The extra index provides the small CPU-only PyTorch build (no NVIDIA GPU needed).
+# If you have an NVIDIA GPU, install torch/torchvision from https://pytorch.org first.
+# On Kaggle/Colab, keep the pre-installed CUDA torch and only install ultralytics.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Deep learning / YOLO11n
+torch==2.15.0
+torchvision==0.29.2
+ultralytics==8.4.215
+
+# Computer vision and data processing
+opencv-python==5.0.0.93
+numpy==2.5.4
+pandas==3.1.1
+matplotlib==3.11.2
+PyYAML==6.0.3
+
+# User interface (Phase 5)
+streamlit==1.67.0
+
+# Testing
+pytest==9.2.0
