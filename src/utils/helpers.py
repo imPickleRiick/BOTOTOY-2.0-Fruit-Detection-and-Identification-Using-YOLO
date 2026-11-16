@@ -6,6 +6,8 @@ any machine (Windows laptop, Kaggle, Colab) without hardcoded absolute paths.
 from __future__ import annotations
 
 import json
+import os
+import platform
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -58,6 +60,35 @@ def list_images(folder: str | Path, extensions: Iterable[str]) -> list[Path]:
     if not folder.is_dir():
         return []
     return sorted(p for p in folder.iterdir() if p.is_file() and p.suffix.lower() in exts)
+
+
+def cpu_name() -> str:
+    """Human-readable CPU model name (Windows registry / Linux cpuinfo / generic fallback)."""
+    try:
+        if platform.system() == "Windows":
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"HARDWARE\DESCRIPTION\System\CentralProcessor\0")
+            return winreg.QueryValueEx(key, "ProcessorNameString")[0].strip()
+        cpuinfo = Path("/proc/cpuinfo")
+        if cpuinfo.is_file():
+            for line in cpuinfo.read_text().splitlines():
+                if line.startswith("model name"):
+                    return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    return platform.processor() or platform.machine()
+
+
+def system_info() -> dict:
+    """Hardware/software summary recorded with every evaluation and training run."""
+    info = {"os": platform.platform(), "python": platform.python_version(), "cpu": cpu_name(),
+            "cpu_threads": os.cpu_count()}
+    try:
+        import psutil  # installed as an Ultralytics dependency
+        info["ram_gb"] = round(psutil.virtual_memory().total / 1024 ** 3, 1)
+    except ImportError:
+        pass
+    return info
 
 
 def relpath_posix(path: Path, start: Path) -> str:
