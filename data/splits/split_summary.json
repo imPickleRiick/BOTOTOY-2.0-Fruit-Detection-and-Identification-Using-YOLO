@@ -89,5 +89,22 @@
     "near_duplicate_pairs_across_splits": 0,
     "leakage_free": true
   },
-  "strategy": "loaded from committed manifests"
+  "strategy": "Option A: keep original train; stratified grouped 50/50 re-split of original valid+test",
+  "seed": 42,
+  "holdout_groups": 1367,
+  "holdout_groups_with_multiple_images": 1,
+  "excluded": [
+    {
+      "image": "valid/images/13aa950e12907f38_jpg.rf.1921893a9ef4902c631e6a8688a4931d.jpg",
+      "reason": "near-duplicate of training image (Hamming 4)"
+    },
+    {
+      "image": "valid/images/82c6431f2a0503ae_jpg.rf.35f8968a4db45499f2d2d27025e4c926.jpg",
+      "reason": "near-duplicate of training image (Hamming 3)"
+    },
+    {
+      "image": "valid/images/84b032fa9879a0c1_jpg.rf.0c06022465e2e91acf68102f87dbbf82.jpg",
+      "reason": "near-duplicate of training image (Hamming 3)"
+    }
+  ]
 }

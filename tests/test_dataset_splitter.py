@@ -62,3 +62,21 @@ def test_committed_manifests_have_no_overlap_and_match_summary():
     # Option A: training images come only from the original train folder.
     assert all(p.startswith("train/") for p in lists["train"])
     assert not any(p.startswith("train/") for p in lists["val"] + lists["test"])
+
+
+def test_from_manifest_keeps_build_info(tmp_path):
+    """Regression: --from-manifest used to drop the seed and the excluded-image list."""
+    from src.data.dataset_splitter import load_build_info
+    summary = {"strategy": "Option A", "seed": 42, "excluded": [{"image": "x.jpg", "reason": "leak"}],
+               "splits": {"train": {}}, "verification": {"leakage_free": True}}
+    path = tmp_path / "split_summary.json"
+    path.write_text(json.dumps(summary), encoding="utf-8")
+    info = load_build_info(path)
+    assert info == {"strategy": "Option A", "seed": 42, "excluded": [{"image": "x.jpg", "reason": "leak"}]}
+    assert "strategy" in load_build_info(tmp_path / "missing.json")
+
+
+@pytest.mark.skipif(not (SPLITS_DIR / "split_summary.json").is_file(), reason="split summary not generated")
+def test_committed_summary_records_seed_and_exclusions():
+    summary = json.loads((SPLITS_DIR / "split_summary.json").read_text(encoding="utf-8"))
+    assert summary["seed"] == 42 and len(summary["excluded"]) == 3

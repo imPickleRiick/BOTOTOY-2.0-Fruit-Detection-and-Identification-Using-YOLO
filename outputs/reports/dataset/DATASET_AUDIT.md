@@ -48,10 +48,13 @@ Duplicate box lines are harmless: Ultralytics removes duplicate labels automatic
 - Near-duplicates (64-bit dHash, Hamming distance <= 4): 2524 pairs, of which 2499 are augmented copies of the same photo and **5 cross original splits** {'train-valid': 5}
 - Cross-split pairs were inspected visually (`near_duplicate_pairs/`): at least one is the same photo with different color processing (true leakage); others are different photos from the same photo series. **All validation images involved were excluded** from the final val/test sets:
 
+  - `valid/images/13aa950e12907f38_jpg.rf.1921893a9ef4902c631e6a8688a4931d.jpg` - near-duplicate of training image (Hamming 4)
+  - `valid/images/82c6431f2a0503ae_jpg.rf.35f8968a4db45499f2d2d27025e4c926.jpg` - near-duplicate of training image (Hamming 3)
+  - `valid/images/84b032fa9879a0c1_jpg.rf.0c06022465e2e91acf68102f87dbbf82.jpg` - near-duplicate of training image (Hamming 3)
 
 ## 5. Final train / validation / test split (Option A)
 
-The original training split is kept unchanged (it contains every augmented copy, so copies can never leak into evaluation). The un-augmented original valid + test images were pooled, leaking images removed, near-duplicates grouped, and groups assigned ~50/50 to val and test, stratified by each group's dominant class (seed None).
+The original training split is kept unchanged (it contains every augmented copy, so copies can never leak into evaluation). The un-augmented original valid + test images were pooled, leaking images removed, near-duplicates grouped, and groups assigned ~50/50 to val and test, stratified by each group's dominant class (seed 42).
 
 | Split | Images | Image share | Unique photos | Unique-photo share | Boxes |
 |---|---|---|---|---|---|

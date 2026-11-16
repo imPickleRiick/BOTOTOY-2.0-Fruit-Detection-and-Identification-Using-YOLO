@@ -32,6 +32,7 @@ Usage (from the project root, after running dataset_validator):
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import random
 import shutil
@@ -279,6 +280,22 @@ def materialize(split_lists: dict[str, list[str]], cfg: dict) -> Path:
     return data_yaml
 
 
+BUILD_INFO_KEYS = ("strategy", "seed", "holdout_groups", "holdout_groups_with_multiple_images", "excluded")
+
+
+def load_build_info(summary_path: Path) -> dict:
+    """How the committed split was built (strategy, seed, excluded images).
+
+    --from-manifest only recomputes counts and leakage checks, so it must carry this
+    information over from the existing summary instead of discarding it.
+    """
+    if not summary_path.is_file():
+        return {"strategy": "loaded from committed manifests (build details unavailable)"}
+    with open(summary_path, "r", encoding="utf-8") as f:
+        previous = json.load(f)
+    return {k: previous[k] for k in BUILD_INFO_KEYS if k in previous}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", default=None, help="path to config.yaml")
@@ -289,7 +306,8 @@ def main() -> int:
     splits_dir = resolve_path(cfg["dataset"]["splits_dir"])
     try:
         if args.from_manifest:
-            split_lists, info = read_manifests(splits_dir), {"strategy": "loaded from committed manifests"}
+            split_lists = read_manifests(splits_dir)
+            info = load_build_info(splits_dir / "split_summary.json")
         else:
             split_lists, info = build_split(cfg)
             write_manifests(split_lists, splits_dir)
