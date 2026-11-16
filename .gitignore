@@ -33,3 +33,6 @@ models/**/*.pt
 # --- Secrets ---
 .env
 kaggle.json
+
+# --- App outputs saved from the user interface ---
+outputs/app/

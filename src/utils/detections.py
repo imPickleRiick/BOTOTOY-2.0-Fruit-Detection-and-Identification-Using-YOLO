@@ -55,8 +55,10 @@ def draw_detections(image: np.ndarray, dets: list[Detection], show_confidence: b
                     thickness: int | None = None) -> np.ndarray:
     """Return a copy of the image with labeled boxes drawn on it."""
     out = image.copy()
-    th = thickness or max(2, round(max(out.shape[:2]) / 400))
+    longest = max(out.shape[:2])
+    th = thickness or max(2, round(longest / 400))
+    font_scale = max(0.5, longest / 1280)  # 0.5 up to 1280 px, then grows with the image
     for d in dets:
         label = f"{d.class_name} {d.confidence:.2f}" if show_confidence else d.class_name
-        draw_box(out, d.box, label, CLASS_COLORS_BGR.get(d.class_name, DEFAULT_COLOR_BGR), th)
+        draw_box(out, d.box, label, CLASS_COLORS_BGR.get(d.class_name, DEFAULT_COLOR_BGR), th, font_scale)
     return out

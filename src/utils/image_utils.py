@@ -12,10 +12,18 @@ CLASS_COLORS_BGR: dict[str, tuple[int, int, int]] = {
     "Banana": (0, 215, 255),       # yellow
     "Grape": (150, 40, 140),       # purple
     "Orange": (0, 140, 255),       # orange
-    "Pineapple": (170, 160, 0),    # teal
+    "Pineapple": (200, 150, 0),    # blue
     "Watermelon": (60, 170, 60),   # green
 }
 DEFAULT_COLOR_BGR = (200, 200, 200)
+
+# Deeper versions of the same hues for charts (bars, legends). The bright box colors above are
+# too light on a white background (banana yellow); these pass contrast and color-blindness
+# checks in both light and dark themes while staying recognisably the same fruit color.
+CLASS_CHART_COLORS_HEX: dict[str, str] = {
+    "Apple": "#D63031", "Banana": "#B88A00", "Grape": "#9B45B0",
+    "Orange": "#E86A10", "Pineapple": "#0088C2", "Watermelon": "#2F9132",
+}
 
 
 def read_image(path: str | Path) -> np.ndarray | None:
@@ -54,12 +62,13 @@ def yolo_to_xyxy(xc: float, yc: float, w: float, h: float, img_w: int, img_h: in
 
 
 def draw_box(image: np.ndarray, xyxy: tuple[int, int, int, int], label: str,
-             color: tuple[int, int, int] = DEFAULT_COLOR_BGR, thickness: int = 2) -> np.ndarray:
+             color: tuple[int, int, int] = DEFAULT_COLOR_BGR, thickness: int = 2,
+             font_scale: float = 0.5) -> np.ndarray:
     """Draw one bounding box with a filled label tag (modifies and returns `image`)."""
     x1, y1, x2, y2 = map(int, xyxy)
     cv2.rectangle(image, (x1, y1), (x2, y2), color, thickness)
     if label:
-        font, scale, txt_th = cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1
+        font, scale, txt_th = cv2.FONT_HERSHEY_SIMPLEX, font_scale, max(1, round(font_scale * 2))
         (tw, th), baseline = cv2.getTextSize(label, font, scale, txt_th)
         ty = y1 - 4 if y1 - th - baseline - 4 >= 0 else y1 + th + 4  # put tag inside if no room above
         cv2.rectangle(image, (x1, ty - th - baseline), (x1 + tw + 4, ty + baseline - 2), color, -1)

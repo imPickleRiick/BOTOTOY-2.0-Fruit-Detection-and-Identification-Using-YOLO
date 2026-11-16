@@ -24,7 +24,7 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 | 2. Environment and dataset preparation | ✅ Done ([dataset audit report](outputs/reports/dataset/DATASET_AUDIT.md)) |
 | 3. OpenCV baseline | ✅ Done ([baseline report](outputs/baseline/BASELINE_REPORT.md)) |
 | 4. YOLO11n training (Google Colab GPU) and evaluation | ✅ Done ([training](outputs/yolo/training/TRAINING_REPORT.md), [test evaluation](outputs/yolo/eval_test/EVALUATION.md), [baseline vs YOLO](outputs/comparisons/test/COMPARISON.md)) |
-| 5. Streamlit user interface | ⏳ Not started |
+| 5. Streamlit user interface | ✅ Done (`streamlit run app.py`) |
 | 6. Integration and end-to-end testing | ⏳ Not started |
 | 7. Final documentation | ⏳ Not started |
 
@@ -73,6 +73,37 @@ python -m venv .venv
 
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
+```
+
+## Run the app
+
+```bash
+streamlit run app.py
+```
+
+Your browser opens at http://localhost:8501. The trained model is already in the repository, so
+detection works immediately; the dataset is only needed for training and evaluation. Pages:
+
+| Page | What it does |
+|---|---|
+| Dashboard | Project summary, the 6 fruit classes, model status, test results, system information |
+| Fruit Detection | Upload one photo (or pick a demo image) → boxes, labels, confidences, counts per fruit and total, timing, download annotated image / JSON |
+| Batch Detection | Many photos at once → per-image results, combined counts, timing, ZIP download (annotated images + CSV + JSON); unreadable files are reported and skipped |
+| YOLO11n Model | How YOLO works, model card, confidence-threshold explorer, same image with the OpenCV baseline |
+| OpenCV Baseline | Every processing step (masks, morphology, contours) and the rule decision for every candidate region |
+| Model Evaluation | Final test results vs targets, per-class metrics, confusion matrix, PR curve, training curves, baseline vs YOLO, error examples |
+| About | Project, course and team |
+
+The sidebar selects the model (YOLO11n or the OpenCV baseline) and the YOLO confidence threshold, NMS IoU
+threshold and image size. If the YOLO weights are missing or cannot be loaded, the app automatically uses the
+OpenCV baseline and says so. The 8 demo images in `assets/samples/` come from the dataset's test split
+(CC0) and are labeled as demonstration data in the app. "Save to outputs/app/" writes results to
+`outputs/app/` (git-ignored).
+
+Batch processing also works from the command line:
+
+```bash
+python -m src.inference.batch_processor path/to/folder --method yolo --out outputs/app/my_batch
 ```
 
 ## Dataset preparation
@@ -214,7 +245,9 @@ python -m pytest
 ## Project structure (current)
 
 ```
+├── app.py                      # Streamlit app entry point (streamlit run app.py)
 ├── config/config.yaml          # all paths and parameters
+├── assets/samples/             # 8 demo images from the test split (CC0)
 ├── notebooks/train_yolo_colab.ipynb   # YOLO11n training on Google Colab
 ├── data/
 │   ├── splits/                 # committed split file lists + summary
@@ -242,6 +275,13 @@ python -m pytest
 │   │   └── training_report.py     # import Colab results, verify + install weights
 │   ├── evaluation/
 │   │   └── compare_methods.py     # baseline vs YOLO on the same images
+│   ├── inference/
+│   │   ├── image_processor.py     # decode upload, run YOLO or baseline (with fallback), timing
+│   │   ├── batch_processor.py     # many images, summary, CSV/ZIP, command-line tool
+│   │   └── visualization.py       # tables, image encoding, stage titles
+│   ├── app/
+│   │   ├── common.py              # cached models, sidebar settings, result display, charts
+│   │   └── pages/                 # one module per page (dashboard, detection, batch, ...)
 │   └── utils/
 │       ├── helpers.py          # config, paths, JSON, system info
 │       ├── image_utils.py      # image I/O, box drawing, perceptual hash
