@@ -190,6 +190,14 @@ def scan_split(raw_dir: Path, split: str, classes: list[str], extensions: list[s
     return image_rows, box_rows, orphan_labels
 
 
+def _popcount64(values: np.ndarray) -> np.ndarray:
+    """Number of 1-bits in each uint64 (np.bitwise_count needs NumPy 2.x; Colab may have 1.x)."""
+    if hasattr(np, "bitwise_count"):
+        return np.bitwise_count(values)
+    as_bytes = values.astype(np.uint64).view(np.uint8).reshape(*values.shape, 8)
+    return np.unpackbits(as_bytes, axis=-1).sum(axis=-1)
+
+
 def find_near_duplicate_pairs(hashes: np.ndarray, max_distance: int, chunk: int = 512) -> list[tuple[int, int, int]]:
     """All index pairs (i, j, distance) with i < j whose 64-bit hashes differ in <= max_distance bits.
 
@@ -199,7 +207,7 @@ def find_near_duplicate_pairs(hashes: np.ndarray, max_distance: int, chunk: int 
     n = len(hashes)
     for start in range(0, n, chunk):
         block = hashes[start:start + chunk]
-        distances = np.bitwise_count(block[:, None] ^ hashes[None, :])  # (chunk, n)
+        distances = _popcount64(block[:, None] ^ hashes[None, :])  # (chunk, n)
         rows, cols = np.nonzero(distances <= max_distance)
         for r, c in zip(rows, cols):
             i = start + int(r)

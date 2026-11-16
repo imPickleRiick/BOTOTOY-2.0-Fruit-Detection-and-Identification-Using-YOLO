@@ -72,7 +72,8 @@ def average_precision(recall: np.ndarray, precision: np.ndarray) -> float:
     mpre = np.concatenate(([1.0], precision, [0.0]))
     mpre = np.flip(np.maximum.accumulate(np.flip(mpre)))  # precision envelope
     x = np.linspace(0, 1, 101)
-    return float(np.trapezoid(np.interp(x, mrec, mpre), x))
+    trapezoid = getattr(np, "trapezoid", None) or np.trapz  # np.trapz was renamed in NumPy 2.0
+    return float(trapezoid(np.interp(x, mrec, mpre), x))
 
 
 def evaluate(images: list[ImageEval], classes: list[str]) -> dict:
