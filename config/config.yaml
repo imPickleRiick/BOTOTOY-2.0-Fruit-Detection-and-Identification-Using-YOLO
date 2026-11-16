@@ -103,6 +103,38 @@ baseline:
   min_confidence: 0.0
   max_detections: 50
 
+# ---------------------------------------------------------------------------
+# YOLO11n (src/yolo). Training runs on Google Colab (T4 GPU); inference and
+# evaluation run locally on the CPU.
+# ---------------------------------------------------------------------------
+yolo:
+  model: "models/pretrained/yolo11n.pt"   # COCO-pretrained checkpoint (auto-downloaded, ~5 MB)
+  trained_weights: "models/trained/bototoy_yolo11n.pt"   # our fine-tuned model (best.pt)
+
+  train:
+    imgsz: 640
+    epochs: 50
+    batch: 16            # proposal suggested 8; a T4 (15 GB) handles 16 for YOLO11n -> steadier, faster
+    patience: 10         # early stopping: stop if val fitness does not improve for 10 epochs
+    optimizer: "SGD"     # explicit (Ultralytics 'auto' would also pick SGD for this many iterations)
+    lr0: 0.01            # initial learning rate (Ultralytics default)
+    momentum: 0.937
+    seed: 42
+    deterministic: true
+    freeze: null         # null = fine-tune all layers; e.g. 10 = freeze the backbone
+    workers: 2           # data-loading processes (Colab has 2 CPU cores)
+    cache: false         # true/"disk" can speed up data loading if RAM/disk allow
+    device: "auto"       # "auto" -> GPU 0 if available, else CPU
+    project: "runs/train"
+    name: "yolo11n_fruits"
+
+  inference:
+    conf: 0.25           # minimum confidence to keep a detection
+    iou: 0.7             # NMS IoU threshold (Ultralytics default)
+    imgsz: 640
+    max_det: 100
+    device: "cpu"        # the team's laptops have no CUDA GPU
+
 outputs:
   reports_dir: "outputs/reports"
   dataset_report_dir: "outputs/reports/dataset"

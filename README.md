@@ -23,7 +23,7 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 | 1. Inspection and planning | ✅ Done |
 | 2. Environment and dataset preparation | ✅ Done ([dataset audit report](outputs/reports/dataset/DATASET_AUDIT.md)) |
 | 3. OpenCV baseline | ✅ Done ([baseline report](outputs/baseline/BASELINE_REPORT.md)) |
-| 4. YOLO11n training (Kaggle GPU) and evaluation | ⏳ Not started |
+| 4. YOLO11n training (Google Colab GPU) and evaluation | 🔄 In progress: code ready and tested, training run pending |
 | 5. Streamlit user interface | ⏳ Not started |
 | 6. Integration and end-to-end testing | ⏳ Not started |
 | 7. Final documentation | ⏳ Not started |
@@ -131,6 +131,39 @@ backgrounds, but it is weak on the cluttered real-world images that make up most
 (validation mAP50 ≈ 0.05). See the [baseline report](outputs/baseline/BASELINE_REPORT.md) for the
 results and limitations.
 
+## YOLO11n (main method)
+
+**Training runs on Google Colab** because the team's laptops have no NVIDIA GPU. CPU training of 50 epochs
+would take more than 100 hours.
+
+1. Open [notebooks/train_yolo_colab.ipynb](notebooks/train_yolo_colab.ipynb) in Google Colab
+   (File → Upload notebook, or open it from GitHub).
+2. Runtime → Change runtime type → **T4 GPU**, then run the cells in order. The notebook clones this
+   repository, downloads the dataset, rebuilds the committed split, and trains YOLO11n. Checkpoints are
+   saved to Google Drive, so an interrupted run can be resumed.
+3. Download `bototoy_training_results.zip` at the end, then on the laptop:
+
+```bash
+# Verify + install the trained weights (models/trained/bototoy_yolo11n.pt) and write the training report
+python -m src.yolo.training_report path/to/bototoy_training_results.zip
+
+# Evaluate on the validation split (Ultralytics metrics + our shared metrics, timing, error examples)
+python -m src.yolo.evaluate
+
+# Detect fruits in your own images
+python -m src.yolo.detector path/to/photo.jpg --out outputs/yolo/demo
+
+# Baseline vs YOLO on the same images with the same metrics
+python -m src.evaluation.compare_methods
+```
+
+The test split is evaluated **once**, at the end: `python -m src.yolo.evaluate --split test --final`
+and `python -m src.evaluation.compare_methods --split test --final`.
+
+Training settings are in `config/config.yaml` under `yolo.train`: YOLO11n pretrained on COCO, image size 640,
+up to 50 epochs, batch 16, early-stopping patience 10, SGD with lr 0.01, seed 42. For a quick CPU
+pipeline check (not a real model): `python -m src.yolo.train --epochs 1 --fraction 0.02 --imgsz 320 --device cpu --no-copy`.
+
 ## Tests
 
 ```bash
@@ -143,6 +176,7 @@ python -m pytest
 
 ```
 ├── config/config.yaml          # all paths and parameters
+├── notebooks/train_yolo_colab.ipynb   # YOLO11n training on Google Colab
 ├── data/
 │   ├── splits/                 # committed split file lists + summary
 │   ├── raw/                    # downloaded dataset (git-ignored)
@@ -162,6 +196,13 @@ python -m pytest
 │   │   ├── color_calibration.py   # measures fruit colors on training data
 │   │   ├── evaluate_baseline.py   # metrics on val (test locked)
 │   │   └── ablation.py            # improvement log
+│   ├── yolo/
+│   │   ├── train.py               # transfer-learning training (Colab or local)
+│   │   ├── detector.py            # YoloDetector + command-line tool
+│   │   ├── evaluate.py            # metrics, timing, error analysis (test locked)
+│   │   └── training_report.py     # import Colab results, verify + install weights
+│   ├── evaluation/
+│   │   └── compare_methods.py     # baseline vs YOLO on the same images
 │   └── utils/
 │       ├── helpers.py          # config, paths, JSON, system info
 │       ├── image_utils.py      # image I/O, box drawing, perceptual hash
