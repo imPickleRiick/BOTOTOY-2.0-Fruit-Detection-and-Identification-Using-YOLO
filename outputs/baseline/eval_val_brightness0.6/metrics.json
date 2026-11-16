@@ -1,0 +1,94 @@
+{
+  "per_class": {
+    "Apple": {
+      "ground_truth": 448,
+      "predictions": 159,
+      "tp@0.5": 29,
+      "precision@0.5": 0.1824,
+      "recall@0.5": 0.0647,
+      "f1@0.5": 0.0956,
+      "AP50": 0.1009,
+      "AP50-95": 0.0618
+    },
+    "Banana": {
+      "ground_truth": 284,
+      "predictions": 579,
+      "tp@0.5": 43,
+      "precision@0.5": 0.0743,
+      "recall@0.5": 0.1514,
+      "f1@0.5": 0.0997,
+      "AP50": 0.0537,
+      "AP50-95": 0.0302
+    },
+    "Grape": {
+      "ground_truth": 572,
+      "predictions": 467,
+      "tp@0.5": 49,
+      "precision@0.5": 0.1049,
+      "recall@0.5": 0.0857,
+      "f1@0.5": 0.0943,
+      "AP50": 0.0624,
+      "AP50-95": 0.0369
+    },
+    "Orange": {
+      "ground_truth": 883,
+      "predictions": 407,
+      "tp@0.5": 51,
+      "precision@0.5": 0.1253,
+      "recall@0.5": 0.0578,
+      "f1@0.5": 0.0791,
+      "AP50": 0.0798,
+      "AP50-95": 0.0504
+    },
+    "Pineapple": {
+      "ground_truth": 140,
+      "predictions": 128,
+      "tp@0.5": 1,
+      "precision@0.5": 0.0078,
+      "recall@0.5": 0.0071,
+      "f1@0.5": 0.0075,
+      "AP50": 0.004,
+      "AP50-95": 0.0016
+    },
+    "Watermelon": {
+      "ground_truth": 164,
+      "predictions": 474,
+      "tp@0.5": 17,
+      "precision@0.5": 0.0359,
+      "recall@0.5": 0.1037,
+      "f1@0.5": 0.0533,
+      "AP50": 0.0416,
+      "AP50-95": 0.0145
+    }
+  },
+  "mean": {
+    "precision@0.5": 0.0884,
+    "recall@0.5": 0.0784,
+    "f1@0.5": 0.0716,
+    "mAP50": 0.0571,
+    "mAP50-95": 0.0326
+  },
+  "split": "val",
+  "images": 686,
+  "brightness_factor": 0.6,
+  "localization_recall@0.5": 0.1546,
+  "counting": {
+    "mean_absolute_count_error": 3.322,
+    "mean_signed_count_error": -0.404,
+    "exact_count_rate": 0.1589
+  },
+  "timing_ms": {
+    "detector_mean": 57.8,
+    "detector_median": 56.9,
+    "end_to_end_mean": 68.3,
+    "note": "end-to-end = image read + detection + drawing boxes; single CPU process"
+  },
+  "hardware": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7",
+    "cpu": "AMD Ryzen 5 5600U with Radeon Graphics",
+    "cpu_threads": 12,
+    "ram_gb": 5.9,
+    "opencv": "5.0.0"
+  }
+}

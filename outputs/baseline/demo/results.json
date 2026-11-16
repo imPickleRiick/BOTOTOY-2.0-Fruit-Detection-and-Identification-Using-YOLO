@@ -1,0 +1,301 @@
+[
+  {
+    "image": "028ee4d4f435c506_jpg.rf.8f171ec7a2bb200c074e87bb494682bd.jpg",
+    "total": 1,
+    "counts": {
+      "Apple": 1,
+      "Banana": 0,
+      "Grape": 0,
+      "Orange": 0,
+      "Pineapple": 0,
+      "Watermelon": 0
+    },
+    "time_ms": 53.1,
+    "detections": [
+      {
+        "class_name": "Apple",
+        "class_id": 0,
+        "confidence": 0.5904,
+        "box": [
+          104,
+          273,
+          273,
+          443
+        ],
+        "reason": "red + compact (extent 0.73)"
+      }
+    ]
+  },
+  {
+    "image": "100353af50716614_jpg.rf.73f4b2b7e5b42c369608e9f2bcf6b743.jpg",
+    "total": 1,
+    "counts": {
+      "Apple": 0,
+      "Banana": 1,
+      "Grape": 0,
+      "Orange": 0,
+      "Pineapple": 0,
+      "Watermelon": 0
+    },
+    "time_ms": 51.7,
+    "detections": [
+      {
+        "class_name": "Banana",
+        "class_id": 1,
+        "confidence": 0.6093,
+        "box": [
+          112,
+          90,
+          572,
+          597
+        ],
+        "reason": "yellow hue 25"
+      }
+    ]
+  },
+  {
+    "image": "11a50eb1f43d8727_jpg.rf.c7753892562ceaae31599738ea21cd57.jpg",
+    "total": 2,
+    "counts": {
+      "Apple": 0,
+      "Banana": 0,
+      "Grape": 0,
+      "Orange": 1,
+      "Pineapple": 0,
+      "Watermelon": 1
+    },
+    "time_ms": 52.8,
+    "detections": [
+      {
+        "class_name": "Orange",
+        "class_id": 3,
+        "confidence": 0.6975,
+        "box": [
+          161,
+          90,
+          498,
+          592
+        ],
+        "reason": "orange hue 13 + round (0.82)"
+      },
+      {
+        "class_name": "Watermelon",
+        "class_id": 5,
+        "confidence": 0.2484,
+        "box": [
+          205,
+          515,
+          446,
+          640
+        ],
+        "reason": "red + triangular (extent 0.31)"
+      }
+    ]
+  },
+  {
+    "image": "12d334ca0ef34967_jpg.rf.cf4a83a9277bf9c238cce27010ebb050.jpg",
+    "total": 1,
+    "counts": {
+      "Apple": 1,
+      "Banana": 0,
+      "Grape": 0,
+      "Orange": 0,
+      "Pineapple": 0,
+      "Watermelon": 0
+    },
+    "time_ms": 33.1,
+    "detections": [
+      {
+        "class_name": "Apple",
+        "class_id": 0,
+        "confidence": 0.5742,
+        "box": [
+          64,
+          90,
+          229,
+          329
+        ],
+        "reason": "red + compact (extent 0.68)"
+      }
+    ]
+  },
+  {
+    "image": "ae2b9b0d5c57c542_jpg.rf.4bc7bc6b4e5794db3ee4e11b70c168fe.jpg",
+    "total": 3,
+    "counts": {
+      "Apple": 0,
+      "Banana": 3,
+      "Grape": 0,
+      "Orange": 0,
+      "Pineapple": 0,
+      "Watermelon": 0
+    },
+    "time_ms": 114.8,
+    "detections": [
+      {
+        "class_name": "Banana",
+        "class_id": 1,
+        "confidence": 0.5491,
+        "box": [
+          44,
+          150,
+          232,
+          539
+        ],
+        "reason": "warm + elongated (2.8)"
+      },
+      {
+        "class_name": "Banana",
+        "class_id": 1,
+        "confidence": 0.3205,
+        "box": [
+          566,
+          336,
+          640,
+          420
+        ],
+        "reason": "yellow hue 21"
+      },
+      {
+        "class_name": "Banana",
+        "class_id": 1,
+        "confidence": 0.3097,
+        "box": [
+          399,
+          277,
+          475,
+          381
+        ],
+        "reason": "yellow hue 21"
+      }
+    ]
+  },
+  {
+    "image": "72bc33e9e730ec2e_jpg.rf.f9d977c3c733e857d1a5c874acb6ccc4.jpg",
+    "total": 0,
+    "counts": {
+      "Apple": 0,
+      "Banana": 0,
+      "Grape": 0,
+      "Orange": 0,
+      "Pineapple": 0,
+      "Watermelon": 0
+    },
+    "time_ms": 61.0,
+    "detections": []
+  },
+  {
+    "image": "e47fc8e778a84bd3_jpg.rf.8e0de9f9f61c1b2b7d59293327ff1826.jpg",
+    "total": 5,
+    "counts": {
+      "Apple": 2,
+      "Banana": 0,
+      "Grape": 2,
+      "Orange": 0,
+      "Pineapple": 0,
+      "Watermelon": 1
+    },
+    "time_ms": 60.6,
+    "detections": [
+      {
+        "class_name": "Grape",
+        "class_id": 2,
+        "confidence": 0.4083,
+        "box": [
+          0,
+          0,
+          171,
+          212
+        ],
+        "reason": "purple/blue hue 104"
+      },
+      {
+        "class_name": "Grape",
+        "class_id": 2,
+        "confidence": 0.4007,
+        "box": [
+          182,
+          496,
+          640,
+          640
+        ],
+        "reason": "purple/blue hue 110"
+      },
+      {
+        "class_name": "Watermelon",
+        "class_id": 5,
+        "confidence": 0.3815,
+        "box": [
+          41,
+          125,
+          640,
+          573
+        ],
+        "reason": "red + triangular (extent 0.38)"
+      },
+      {
+        "class_name": "Apple",
+        "class_id": 0,
+        "confidence": 0.2965,
+        "box": [
+          400,
+          562,
+          496,
+          640
+        ],
+        "reason": "red + compact (extent 0.70)"
+      },
+      {
+        "class_name": "Apple",
+        "class_id": 0,
+        "confidence": 0.2787,
+        "box": [
+          0,
+          518,
+          55,
+          640
+        ],
+        "reason": "red + compact (extent 0.71)"
+      }
+    ]
+  },
+  {
+    "image": "5444b98b94cd117c_jpg.rf.32c160b97a714cce1a034cc26308de6e.jpg",
+    "total": 2,
+    "counts": {
+      "Apple": 0,
+      "Banana": 1,
+      "Grape": 0,
+      "Orange": 0,
+      "Pineapple": 0,
+      "Watermelon": 1
+    },
+    "time_ms": 73.9,
+    "detections": [
+      {
+        "class_name": "Banana",
+        "class_id": 1,
+        "confidence": 0.5498,
+        "box": [
+          0,
+          132,
+          621,
+          640
+        ],
+        "reason": "yellow hue 22"
+      },
+      {
+        "class_name": "Watermelon",
+        "class_id": 5,
+        "confidence": 0.4085,
+        "box": [
+          388,
+          157,
+          608,
+          363
+        ],
+        "reason": "red + triangular (extent 0.45)"
+      }
+    ]
+  }
+]

@@ -1,0 +1,84 @@
+[
+  {
+    "step": "A. Initial rules",
+    "why": "color masks + shape rules, every region >= 0.2% of the image",
+    "overrides": {},
+    "precision@0.5": 0.0348,
+    "recall@0.5": 0.0896,
+    "f1@0.5": 0.0459,
+    "mAP50": 0.0264,
+    "mAP50-95": 0.0152,
+    "localization_recall": 0.2152,
+    "mean_abs_count_error": 7.608,
+    "predictions": 6658,
+    "detector_ms": 84.6
+  },
+  {
+    "step": "B. Minimum region size 1%",
+    "why": "regions under 1% of the image were ~98% false positives",
+    "overrides": {
+      "min_area_fraction": 0.01
+    },
+    "precision@0.5": 0.0747,
+    "recall@0.5": 0.0736,
+    "f1@0.5": 0.0623,
+    "mAP50": 0.0467,
+    "mAP50-95": 0.0287,
+    "localization_recall": 0.1714,
+    "mean_abs_count_error": 3.656,
+    "predictions": 2899,
+    "detector_ms": 58.1
+  },
+  {
+    "step": "C. Reject irregular green regions",
+    "why": "green 'grape' regions were mostly leaves/grass (0.4% correct)",
+    "overrides": {
+      "rules": {
+        "green_grapes_enabled": false
+      }
+    },
+    "precision@0.5": 0.0843,
+    "recall@0.5": 0.0719,
+    "f1@0.5": 0.0673,
+    "mAP50": 0.0519,
+    "mAP50-95": 0.0317,
+    "localization_recall": 0.1566,
+    "mean_abs_count_error": 3.324,
+    "predictions": 2337,
+    "detector_ms": 56.2
+  },
+  {
+    "step": "D. Size-aware rule score",
+    "why": "rank larger regions higher: they are far more often real fruits",
+    "overrides": {
+      "size_reference_fraction": 0.05
+    },
+    "precision@0.5": 0.0842,
+    "recall@0.5": 0.0719,
+    "f1@0.5": 0.0673,
+    "mAP50": 0.0534,
+    "mAP50-95": 0.0321,
+    "localization_recall": 0.1566,
+    "mean_abs_count_error": 3.324,
+    "predictions": 2337,
+    "detector_ms": 56.1
+  },
+  {
+    "step": "E. Watershed split of touching fruits",
+    "why": "split blobs of touching round fruits (warm/red)",
+    "overrides": {
+      "split_touching": {
+        "enabled": true
+      }
+    },
+    "precision@0.5": 0.0743,
+    "recall@0.5": 0.0752,
+    "f1@0.5": 0.0665,
+    "mAP50": 0.0486,
+    "mAP50-95": 0.0293,
+    "localization_recall": 0.1666,
+    "mean_abs_count_error": 3.802,
+    "predictions": 2815,
+    "detector_ms": 101.5
+  }
+]

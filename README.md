@@ -22,7 +22,7 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 |---|---|
 | 1. Inspection and planning | ✅ Done |
 | 2. Environment and dataset preparation | ✅ Done ([dataset audit report](outputs/reports/dataset/DATASET_AUDIT.md)) |
-| 3. OpenCV baseline | ⏳ Not started |
+| 3. OpenCV baseline | ✅ Done ([baseline report](outputs/baseline/BASELINE_REPORT.md)) |
 | 4. YOLO11n training (Kaggle GPU) and evaluation | ⏳ Not started |
 | 5. Streamlit user interface | ⏳ Not started |
 | 6. Integration and end-to-end testing | ⏳ Not started |
@@ -101,6 +101,36 @@ Outputs:
 - `outputs/reports/dataset/samples/`: annotated ground-truth samples
 - `data/data.yaml`: generated dataset config for Ultralytics (machine-specific, not committed)
 
+## OpenCV baseline (traditional computer vision)
+
+Pipeline: resize + Gaussian blur → BGR→HSV → 4 color masks (red, warm, green, purple) →
+morphological opening/closing → external contours → area filter → features (mean hue, saturation,
+area, aspect ratio, elongation, extent, circularity, solidity) → rule-based classification →
+bounding boxes + NMS → counts per class. All thresholds are in `config/config.yaml` (`baseline:`).
+
+```bash
+# Detect fruits in your own images or folders (annotated copies + results.json)
+python -m src.baseline.pipeline path/to/photo.jpg --out outputs/baseline/demo
+
+# Also save the step-by-step panel (preprocessed / color masks / morphology / contours / detections)
+python -m src.baseline.pipeline path/to/photo.jpg --stages
+
+# Measure training-set fruit colors (used to choose the HSV ranges)
+python -m src.baseline.color_calibration
+
+# Evaluate on the validation split (precision, recall, AP, counting error, timing)
+python -m src.baseline.evaluate_baseline
+python -m src.baseline.evaluate_baseline --brightness 0.6   # simulated darker lighting
+
+# Reproduce the improvement log (each design decision measured on validation)
+python -m src.baseline.ablation
+```
+
+The baseline is intentionally simple and explainable. It works on single fruits against plain
+backgrounds, but it is weak on the cluttered real-world images that make up most of this dataset
+(validation mAP50 ≈ 0.05). See the [baseline report](outputs/baseline/BASELINE_REPORT.md) for the
+results and limitations.
+
 ## Tests
 
 ```bash
@@ -123,10 +153,23 @@ python -m pytest
 │   │   ├── dataset_validator.py
 │   │   ├── dataset_splitter.py
 │   │   └── dataset_analyzer.py
+│   ├── baseline/
+│   │   ├── preprocessing.py       # resize, blur, BGR->HSV
+│   │   ├── segmentation.py        # HSV masks, morphology, contours, watershed
+│   │   ├── feature_extraction.py  # color + shape features
+│   │   ├── fruit_classifier.py    # heuristic rules
+│   │   ├── pipeline.py            # BaselineDetector + command-line tool
+│   │   ├── color_calibration.py   # measures fruit colors on training data
+│   │   ├── evaluate_baseline.py   # metrics on val (test locked)
+│   │   └── ablation.py            # improvement log
 │   └── utils/
-│       ├── helpers.py          # config, paths, JSON
-│       └── image_utils.py      # image I/O, box drawing, perceptual hash
-├── outputs/reports/dataset/    # audit report, charts, samples
+│       ├── helpers.py          # config, paths, JSON, system info
+│       ├── image_utils.py      # image I/O, box drawing, perceptual hash
+│       ├── detections.py       # shared Detection type, NMS, counting, drawing
+│       └── metrics.py          # precision, recall, AP (Ultralytics formula), count error
+├── outputs/
+│   ├── reports/dataset/        # audit report, charts, samples
+│   └── baseline/               # calibration, evaluation, demo outputs, report
 ├── tests/
 └── requirements.txt
 ```
