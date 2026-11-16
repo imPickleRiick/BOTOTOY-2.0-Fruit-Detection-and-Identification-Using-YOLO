@@ -1,0 +1,211 @@
+{
+  "split": "val",
+  "weights": "bototoy_yolo11n.pt",
+  "weights_sha256": "6ce70859560111e7fe252ab43b8e797671453b3ee7cb8e555c28ff239a6a6f29",
+  "system": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7",
+    "cpu": "AMD Ryzen 5 5600U with Radeon Graphics",
+    "cpu_threads": 12,
+    "ram_gb": 5.9,
+    "torch": "2.15.0+cpu",
+    "ultralytics": "8.4.215",
+    "cuda_available": false
+  },
+  "inference_settings": {
+    "conf": 0.25,
+    "iou": 0.7,
+    "imgsz": 640,
+    "max_det": 100,
+    "device": "cpu"
+  },
+  "ultralytics": {
+    "precision": 0.6208,
+    "recall": 0.4358,
+    "mAP50": 0.478,
+    "mAP50-95": 0.3205,
+    "per_class": {
+      "Apple": {
+        "precision": 0.6581,
+        "recall": 0.4754,
+        "AP50": 0.5489,
+        "AP50-95": 0.3956
+      },
+      "Banana": {
+        "precision": 0.5827,
+        "recall": 0.4474,
+        "AP50": 0.4817,
+        "AP50-95": 0.2916
+      },
+      "Grape": {
+        "precision": 0.6342,
+        "recall": 0.4275,
+        "AP50": 0.4541,
+        "AP50-95": 0.2911
+      },
+      "Orange": {
+        "precision": 0.6327,
+        "recall": 0.3431,
+        "AP50": 0.3914,
+        "AP50-95": 0.2399
+      },
+      "Pineapple": {
+        "precision": 0.5837,
+        "recall": 0.3786,
+        "AP50": 0.385,
+        "AP50-95": 0.2468
+      },
+      "Watermelon": {
+        "precision": 0.6332,
+        "recall": 0.5427,
+        "AP50": 0.6068,
+        "AP50-95": 0.4578
+      }
+    },
+    "speed_ms_per_image": {
+      "preprocess": 3.46,
+      "inference": 58.15,
+      "loss": 0.0,
+      "postprocess": 0.97
+    },
+    "note": "precision/recall are at the confidence that maximizes mean F1 (Ultralytics convention)"
+  },
+  "shared": {
+    "images": 686,
+    "ap_from_all_predictions": {
+      "mean": {
+        "precision@0.5": 0.064,
+        "recall@0.5": 0.7646,
+        "f1@0.5": 0.1159,
+        "mAP50": 0.4793,
+        "mAP50-95": 0.3265
+      },
+      "per_class": {
+        "Apple": {
+          "AP50": 0.5259,
+          "AP50-95": 0.3838
+        },
+        "Banana": {
+          "AP50": 0.4904,
+          "AP50-95": 0.3065
+        },
+        "Grape": {
+          "AP50": 0.4604,
+          "AP50-95": 0.3028
+        },
+        "Orange": {
+          "AP50": 0.4233,
+          "AP50-95": 0.2661
+        },
+        "Pineapple": {
+          "AP50": 0.3544,
+          "AP50-95": 0.2314
+        },
+        "Watermelon": {
+          "AP50": 0.6215,
+          "AP50-95": 0.4684
+        }
+      }
+    },
+    "operating_point": {
+      "confidence": 0.25,
+      "iou_nms": 0.7,
+      "mean": {
+        "precision@0.5": 0.6796,
+        "recall@0.5": 0.3914,
+        "f1@0.5": 0.4907
+      },
+      "per_class": {
+        "Apple": {
+          "ground_truth": 448,
+          "predictions": 261,
+          "precision@0.5": 0.7126,
+          "recall@0.5": 0.4152,
+          "f1@0.5": 0.5247
+        },
+        "Banana": {
+          "ground_truth": 284,
+          "predictions": 182,
+          "precision@0.5": 0.6648,
+          "recall@0.5": 0.4261,
+          "f1@0.5": 0.5193
+        },
+        "Grape": {
+          "ground_truth": 572,
+          "predictions": 331,
+          "precision@0.5": 0.6888,
+          "recall@0.5": 0.3986,
+          "f1@0.5": 0.505
+        },
+        "Orange": {
+          "ground_truth": 883,
+          "predictions": 354,
+          "precision@0.5": 0.7006,
+          "recall@0.5": 0.2809,
+          "f1@0.5": 0.401
+        },
+        "Pineapple": {
+          "ground_truth": 140,
+          "predictions": 62,
+          "precision@0.5": 0.629,
+          "recall@0.5": 0.2786,
+          "f1@0.5": 0.3861
+        },
+        "Watermelon": {
+          "ground_truth": 164,
+          "predictions": 132,
+          "precision@0.5": 0.6818,
+          "recall@0.5": 0.5488,
+          "f1@0.5": 0.6081
+        }
+      },
+      "localization_recall@0.5": 0.3725,
+      "counting": {
+        "mean_absolute_count_error": 2.168,
+        "mean_signed_count_error": -1.704,
+        "exact_count_rate": 0.4111
+      }
+    },
+    "timing_ms": {
+      "model_stages_mean": {
+        "preprocess": 1.94,
+        "inference": 58.2,
+        "postprocess": 1.26
+      },
+      "end_to_end_mean": 66.7,
+      "end_to_end_median": 64.0,
+      "end_to_end_p95": 83.1,
+      "note": "end-to-end = read image + preprocess + inference + NMS + draw boxes, batch size 1, CPU, after one warm-up image"
+    },
+    "error_examples": {
+      "tp": 6,
+      "fp": 6,
+      "fn": 6
+    }
+  },
+  "targets": {
+    "mAP50 >= 0.80": {
+      "value": 0.478,
+      "met": false
+    },
+    "mAP50-95 >= 0.50": {
+      "value": 0.3205,
+      "met": false
+    },
+    "recall >= 0.70 for every class": {
+      "value": {
+        "Apple": 0.4754,
+        "Banana": 0.4474,
+        "Grape": 0.4275,
+        "Orange": 0.3431,
+        "Pineapple": 0.3786,
+        "Watermelon": 0.5427
+      },
+      "met": false
+    },
+    "end-to-end <= 1 s per image": {
+      "value_seconds": 0.067,
+      "met": true
+    }
+  }
+}

@@ -23,7 +23,7 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 | 1. Inspection and planning | ✅ Done |
 | 2. Environment and dataset preparation | ✅ Done ([dataset audit report](outputs/reports/dataset/DATASET_AUDIT.md)) |
 | 3. OpenCV baseline | ✅ Done ([baseline report](outputs/baseline/BASELINE_REPORT.md)) |
-| 4. YOLO11n training (Google Colab GPU) and evaluation | 🔄 In progress: code ready and tested, training run pending |
+| 4. YOLO11n training (Google Colab GPU) and evaluation | ✅ Done ([training](outputs/yolo/training/TRAINING_REPORT.md), [test evaluation](outputs/yolo/eval_test/EVALUATION.md), [baseline vs YOLO](outputs/comparisons/test/COMPARISON.md)) |
 | 5. Streamlit user interface | ⏳ Not started |
 | 6. Integration and end-to-end testing | ⏳ Not started |
 | 7. Final documentation | ⏳ Not started |
@@ -164,6 +164,45 @@ Training settings are in `config/config.yaml` under `yolo.train`: YOLO11n pretra
 up to 50 epochs, batch 16, early-stopping patience 10, SGD with lr 0.01, seed 42. For a quick CPU
 pipeline check (not a real model): `python -m src.yolo.train --epochs 1 --fraction 0.02 --imgsz 320 --device cpu --no-copy`.
 
+The trained model is committed as `models/trained/bototoy_yolo11n.pt` (5.5 MB), so the detector works
+right after cloning without retraining.
+
+### Results
+
+Trained on a Colab Tesla T4 for 50 epochs (94 min). The best checkpoint (epoch 47) was selected on the
+validation split. The test split was evaluated once, after all choices were fixed.
+
+| Target (from the proposal) | Validation | **Test** | Met? |
+|---|---|---|---|
+| mAP50 ≥ 0.80 | 0.478 | **0.490** | ❌ |
+| mAP50-95 ≥ 0.50 | 0.321 | **0.338** | ❌ |
+| Recall ≥ 0.70 for every class | 0.34 to 0.54 | **0.32 to 0.68** | ❌ |
+| ≤ 1 s per 640 image (end-to-end, laptop CPU) | 67 ms | **69 ms** | ✅ |
+
+**OpenCV baseline vs YOLO11n on the test split** (same images, same metric code):
+
+| | All 682 test images | | 59 plain-background images | |
+|---|---|---|---|---|
+| | Baseline | YOLO11n | Baseline | YOLO11n |
+| mAP50 | 0.049 | **0.486** | 0.167 | **0.750** |
+| Precision / recall (conf ≥ 0.25) | 0.072 / 0.075 | **0.668 / 0.410** | 0.160 / 0.155 | **0.776 / 0.668** |
+| Exact fruit count | 15.8% | **45.0%** | 35.6% | **59.3%** |
+| Time per image | 35 ms | 62 ms | 24 ms | 62 ms |
+
+YOLO11n is about 10 times as accurate as the baseline (mAP50) and fast enough for interactive use on a laptop CPU.
+It still misses the accuracy targets. Why:
+
+- **Missed fruits, not wrong labels.** When YOLO finds a fruit it usually names it correctly: 65–88% per class in
+  the confusion matrix, with almost no fruit-to-fruit confusion. Most errors are fruits it never detects
+  (signed count error −1.7 fruits/image) and false alarms on background.
+- **Crowded scenes are labeled inconsistently.** In some images every orange in a crate has its own box; in
+  others one box covers the whole pile. The model learns both styles and often draws one group box where
+  the ground truth has dozens of single boxes, which counts as many misses at once (see `outputs/yolo/eval_test/examples/fn_*`).
+- **The training set is small in practice.** Its 7,108 images are augmented copies of only 3,200 photos. Validation
+  mAP levels off after about epoch 30 while training loss keeps falling, so more epochs alone would not close the gap.
+- On controlled, plain-background images, the conditions the proposal targets, test mAP50 is 0.750,
+  close to the 0.80 target.
+
 ## Tests
 
 ```bash
@@ -208,9 +247,12 @@ python -m pytest
 │       ├── image_utils.py      # image I/O, box drawing, perceptual hash
 │       ├── detections.py       # shared Detection type, NMS, counting, drawing
 │       └── metrics.py          # precision, recall, AP (Ultralytics formula), count error
+├── models/trained/bototoy_yolo11n.pt   # trained YOLO11n weights (5.5 MB)
 ├── outputs/
 │   ├── reports/dataset/        # audit report, charts, samples
-│   └── baseline/               # calibration, evaluation, demo outputs, report
+│   ├── baseline/               # calibration, evaluation, demo outputs, report
+│   ├── yolo/                   # training report + curves, val and test evaluations
+│   └── comparisons/test/       # baseline vs YOLO11n on the test split
 ├── tests/
 └── requirements.txt
 ```
