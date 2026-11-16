@@ -1,0 +1,100 @@
+{
+  "raw_dir": "data/raw/dataset_fruits_detection",
+  "classes": [
+    "Apple",
+    "Banana",
+    "Grape",
+    "Orange",
+    "Pineapple",
+    "Watermelon"
+  ],
+  "data_yaml": {
+    "path": "dataset_fruits_detection/data.yaml",
+    "exists": true,
+    "ok": true,
+    "nc": 6,
+    "names": [
+      "Apple",
+      "Banana",
+      "Grape",
+      "Orange",
+      "Pineapple",
+      "Watermelon"
+    ],
+    "splits": {
+      "train": "train/images",
+      "val": "valid/images",
+      "test": "test/images"
+    }
+  },
+  "splits": {
+    "train": {
+      "images": 7108,
+      "boxes": 32059,
+      "critical_images": 0,
+      "issues_images_affected": {
+        "duplicate_box": 2
+      }
+    },
+    "valid": {
+      "images": 914,
+      "boxes": 3227,
+      "critical_images": 0,
+      "issues_images_affected": {
+        "duplicate_box": 1
+      }
+    },
+    "test": {
+      "images": 457,
+      "boxes": 1636,
+      "critical_images": 0,
+      "issues_images_affected": {}
+    }
+  },
+  "totals": {
+    "images": 8479,
+    "boxes": 36922,
+    "critical_images": 0,
+    "orphan_label_files": 0
+  },
+  "orphan_label_files": [],
+  "critical_examples": [],
+  "image_properties": {
+    "formats": {
+      ".jpg": 8479
+    },
+    "sizes": {
+      "640x640": 8479
+    },
+    "channels": {
+      "3": 8479
+    },
+    "file_kb_mean": 57.7
+  },
+  "duplicates": {
+    "exact_duplicate_groups": 34,
+    "exact_duplicate_groups_cross_split": 0,
+    "unique_source_images": 4571,
+    "sources_in_multiple_splits": 0,
+    "unique_sources_per_split": {
+      "train": 3200,
+      "valid": 914,
+      "test": 457
+    },
+    "near_duplicate_max_hamming": 4,
+    "near_duplicate_pairs_total": 2524,
+    "near_duplicate_pairs_same_source": 2499,
+    "near_duplicate_pairs_cross_split": 5,
+    "near_duplicate_pairs_cross_split_by_splits": {
+      "train-valid": 5
+    }
+  },
+  "near_duplicate_examples": [
+    "pair_01_train-valid_d2.jpg",
+    "pair_02_train-valid_d3.jpg",
+    "pair_03_train-valid_d3.jpg",
+    "pair_04_train-valid_d4.jpg",
+    "pair_05_train-valid_d4.jpg"
+  ],
+  "elapsed_seconds": 162.0
+}

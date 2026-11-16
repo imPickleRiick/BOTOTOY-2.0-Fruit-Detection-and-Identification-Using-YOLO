@@ -1,0 +1,164 @@
+{
+  "per_split": {
+    "train": {
+      "images": 7108,
+      "unique_sources": 3200,
+      "boxes": 32059,
+      "boxes_per_image_mean": 4.51,
+      "boxes_per_image_median": 2.0,
+      "boxes_per_image_max": 90,
+      "instances_per_class": {
+        "Apple": 6070,
+        "Banana": 2971,
+        "Grape": 6027,
+        "Orange": 13938,
+        "Pineapple": 1372,
+        "Watermelon": 1681
+      },
+      "images_per_class": {
+        "Apple": 1564,
+        "Banana": 1205,
+        "Grape": 1453,
+        "Orange": 1818,
+        "Pineapple": 601,
+        "Watermelon": 746
+      }
+    },
+    "val": {
+      "images": 686,
+      "unique_sources": 686,
+      "boxes": 2491,
+      "boxes_per_image_mean": 3.63,
+      "boxes_per_image_median": 2.0,
+      "boxes_per_image_max": 66,
+      "instances_per_class": {
+        "Apple": 448,
+        "Banana": 284,
+        "Grape": 572,
+        "Orange": 883,
+        "Pineapple": 140,
+        "Watermelon": 164
+      },
+      "images_per_class": {
+        "Apple": 153,
+        "Banana": 126,
+        "Grape": 148,
+        "Orange": 146,
+        "Pineapple": 58,
+        "Watermelon": 79
+      }
+    },
+    "test": {
+      "images": 682,
+      "unique_sources": 682,
+      "boxes": 2369,
+      "boxes_per_image_mean": 3.47,
+      "boxes_per_image_median": 1.0,
+      "boxes_per_image_max": 82,
+      "instances_per_class": {
+        "Apple": 531,
+        "Banana": 277,
+        "Grape": 603,
+        "Orange": 728,
+        "Pineapple": 101,
+        "Watermelon": 129
+      },
+      "images_per_class": {
+        "Apple": 148,
+        "Banana": 126,
+        "Grape": 145,
+        "Orange": 143,
+        "Pineapple": 59,
+        "Watermelon": 75
+      }
+    }
+  },
+  "per_class": {
+    "Apple": {
+      "instances": 7049,
+      "instance_share": 0.1909,
+      "images": 1865,
+      "median_relative_side": 0.158,
+      "small_boxes_pct": 31.1
+    },
+    "Banana": {
+      "instances": 3532,
+      "instance_share": 0.0957,
+      "images": 1457,
+      "median_relative_side": 0.266,
+      "small_boxes_pct": 17.7
+    },
+    "Grape": {
+      "instances": 7202,
+      "instance_share": 0.1951,
+      "images": 1746,
+      "median_relative_side": 0.13,
+      "small_boxes_pct": 40.7
+    },
+    "Orange": {
+      "instances": 15549,
+      "instance_share": 0.4212,
+      "images": 2107,
+      "median_relative_side": 0.097,
+      "small_boxes_pct": 51.2
+    },
+    "Pineapple": {
+      "instances": 1613,
+      "instance_share": 0.0437,
+      "images": 718,
+      "median_relative_side": 0.262,
+      "small_boxes_pct": 14.8
+    },
+    "Watermelon": {
+      "instances": 1974,
+      "instance_share": 0.0535,
+      "images": 900,
+      "median_relative_side": 0.282,
+      "small_boxes_pct": 14.3
+    }
+  },
+  "images_with_multiple_classes": 295,
+  "total_images": 8476,
+  "total_boxes": 36919,
+  "imbalance_ratio_max_over_min": 9.64,
+  "ultralytics_loader_check": {
+    "ok": true,
+    "names": [
+      "Apple",
+      "Banana",
+      "Grape",
+      "Orange",
+      "Pineapple",
+      "Watermelon"
+    ],
+    "splits": {
+      "train": {
+        "images_loaded": 7108,
+        "boxes_loaded": 32059,
+        "sample_tensor_shape": [
+          3,
+          640,
+          640
+        ]
+      },
+      "val": {
+        "images_loaded": 686,
+        "boxes_loaded": 2491,
+        "sample_tensor_shape": [
+          3,
+          640,
+          640
+        ]
+      },
+      "test": {
+        "images_loaded": 682,
+        "boxes_loaded": 2369,
+        "sample_tensor_shape": [
+          3,
+          640,
+          640
+        ]
+      }
+    }
+  }
+}

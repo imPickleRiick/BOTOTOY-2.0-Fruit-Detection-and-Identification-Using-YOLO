@@ -1,0 +1,93 @@
+{
+  "splits": {
+    "train": {
+      "images": 7108,
+      "image_share": 0.8386,
+      "unique_sources": 3200,
+      "unique_source_share": 0.7005,
+      "boxes": 32059,
+      "instances_per_class": {
+        "Apple": 6070,
+        "Banana": 2971,
+        "Grape": 6027,
+        "Orange": 13938,
+        "Pineapple": 1372,
+        "Watermelon": 1681
+      },
+      "images_per_class": {
+        "Apple": 1564,
+        "Banana": 1205,
+        "Grape": 1453,
+        "Orange": 1818,
+        "Pineapple": 601,
+        "Watermelon": 746
+      }
+    },
+    "val": {
+      "images": 686,
+      "image_share": 0.0809,
+      "unique_sources": 686,
+      "unique_source_share": 0.1502,
+      "boxes": 2491,
+      "instances_per_class": {
+        "Apple": 448,
+        "Banana": 284,
+        "Grape": 572,
+        "Orange": 883,
+        "Pineapple": 140,
+        "Watermelon": 164
+      },
+      "images_per_class": {
+        "Apple": 153,
+        "Banana": 126,
+        "Grape": 148,
+        "Orange": 146,
+        "Pineapple": 58,
+        "Watermelon": 79
+      }
+    },
+    "test": {
+      "images": 682,
+      "image_share": 0.0805,
+      "unique_sources": 682,
+      "unique_source_share": 0.1493,
+      "boxes": 2369,
+      "instances_per_class": {
+        "Apple": 531,
+        "Banana": 277,
+        "Grape": 603,
+        "Orange": 728,
+        "Pineapple": 101,
+        "Watermelon": 129
+      },
+      "images_per_class": {
+        "Apple": 148,
+        "Banana": 126,
+        "Grape": 145,
+        "Orange": 143,
+        "Pineapple": 59,
+        "Watermelon": 75
+      }
+    }
+  },
+  "verification": {
+    "file_overlap": {
+      "train-val": 0,
+      "train-test": 0,
+      "val-test": 0
+    },
+    "md5_overlap": {
+      "train-val": 0,
+      "train-test": 0,
+      "val-test": 0
+    },
+    "source_overlap": {
+      "train-val": 0,
+      "train-test": 0,
+      "val-test": 0
+    },
+    "near_duplicate_pairs_across_splits": 0,
+    "leakage_free": true
+  },
+  "strategy": "loaded from committed manifests"
+}
