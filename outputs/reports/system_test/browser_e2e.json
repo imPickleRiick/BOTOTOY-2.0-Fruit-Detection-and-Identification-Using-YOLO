@@ -1,0 +1,66 @@
+{
+  "description": "Automated with a headless Chromium browser (Playwright API) against `streamlit run app.py` on this computer: real file-picker uploads, real downloads saved to disk and checked.",
+  "date": "2026-11-16 22:20",
+  "steps": [
+    {
+      "step": "Open the app (Dashboard)",
+      "ok": true,
+      "detail": "YOLO11n status \"Ready\", test mAP@0.50 0.490"
+    },
+    {
+      "step": "Upload a photo (file picker) and detect with YOLO11n",
+      "ok": true,
+      "detail": "mandarins_on_plate.jpg: 3 fruit(s), end-to-end 228 ms"
+    },
+    {
+      "step": "Download the annotated image",
+      "ok": true,
+      "detail": "mandarins_on_plate_yolo.jpg, JPEG, 481 KB"
+    },
+    {
+      "step": "Download the results (JSON)",
+      "ok": true,
+      "detail": "mandarins_on_plate_yolo.json: total 3, 3 detections with class, confidence and box, method YOLO11n"
+    },
+    {
+      "step": "Upload a non-image file",
+      "ok": true,
+      "detail": "error shown: \"not_an_image.jpg: not a readable image. Supported formats: JPG, PNG, BMP, WEBP.\""
+    },
+    {
+      "step": "Switch model to the OpenCV baseline (sidebar)",
+      "ok": true,
+      "detail": "single_pineapple.jpg: 5 fruit(s) with the baseline"
+    },
+    {
+      "step": "Batch: upload 4 files (1 invalid) and process",
+      "ok": true,
+      "detail": "3 processed, 1 failed (reported), 5 fruits, mean 99 ms"
+    },
+    {
+      "step": "Download the batch ZIP",
+      "ok": true,
+      "detail": "bototoy_batch_20261117-062007.zip: 866 KB, contains 5/5 expected files"
+    },
+    {
+      "step": "Download the batch table (CSV)",
+      "ok": true,
+      "detail": "4 rows (one per file, the invalid one marked \"error\")"
+    },
+    {
+      "step": "Model Evaluation page shows the final test results",
+      "ok": true,
+      "detail": "mAP@0.50 shown: 0.490"
+    },
+    {
+      "step": "No browser console errors",
+      "ok": true,
+      "detail": "none"
+    }
+  ],
+  "screenshots": [
+    "screenshots/detection_upload.png",
+    "screenshots/batch.png",
+    "screenshots/evaluation.png"
+  ]
+}

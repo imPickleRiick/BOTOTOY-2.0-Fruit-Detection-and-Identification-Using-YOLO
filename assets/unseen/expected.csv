@@ -1,0 +1,13 @@
+image,expected_classes
+apples_in_basket.jpg,Apple
+apples_supermarket_display.jpg,Apple
+three_bananas.jpg,Banana
+bananas_market_stall.jpg,Banana
+grape_bunch_mixed_colors.jpg,Grape
+green_grapes_on_vine.jpg,Grape
+oranges_whole_and_halved.jpg,Orange
+mandarins_on_plate.jpg,Orange
+oranges_on_tree.jpg,Orange
+green_unripe_orange.jpg,Orange
+single_pineapple.jpg,Pineapple
+yellow_watermelon_halves.jpg,Watermelon

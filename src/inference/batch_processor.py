@@ -23,10 +23,12 @@ from pathlib import Path
 
 from src.inference.image_processor import (BASELINE, METHOD_LABELS, YOLO, FruitDetectionEngine,
                                            InvalidImageError)
-from src.inference.visualization import encode_image, safe_stem
+from src.inference.visualization import encode_image, fit_within, safe_stem
 from src.utils.helpers import ensure_dir, save_json
 
 MAX_BATCH_IMAGES = 100
+ANNOTATED_MAX_SIDE = 2048   # batch outputs are capped at this size to keep memory low (boxes in the
+                            # JSON/CSV stay in original-image pixels)
 
 
 @dataclass
@@ -56,6 +58,7 @@ class BatchResult:
     requested_method: str
     settings: dict
     wall_time_ms: float
+    _zip_cache: bytes | None = field(default=None, repr=False)
 
     @property
     def succeeded(self) -> list[BatchItem]:
@@ -112,15 +115,19 @@ class BatchResult:
         return buf.getvalue()
 
     def to_zip(self) -> bytes:
-        """annotated/<image>_<method>.jpg for every processed image + results.csv + summary.json."""
+        """annotated/<image>_<method>.jpg for every processed image + results.csv + summary.json.
+        Built once and reused (the page asks for it on every refresh)."""
         import json
+        if self._zip_cache is not None:
+            return self._zip_cache
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
             for i in self.succeeded:
                 z.writestr(f"annotated/{i.annotated_name}", i.annotated_jpeg)
             z.writestr("results.csv", self.to_csv())
             z.writestr("summary.json", json.dumps(self.summary(), indent=2))
-        return buf.getvalue()
+        self._zip_cache = buf.getvalue()
+        return self._zip_cache
 
 
 def _unique_stems(names: list[str]) -> list[str]:
@@ -154,7 +161,8 @@ def process_batch(files: Iterable[tuple[str, bytes]], engine: FruitDetectionEngi
             h, w = r.image.shape[:2]
             items.append(BatchItem(name, stem, True, method=r.method, image_size=(w, h), counts=r.counts,
                                    total=r.total, detections=[d.as_dict() for d in r.detections],
-                                   timing_ms=r.timing_ms, notice=r.notice, annotated_jpeg=encode_image(r.annotated)))
+                                   timing_ms=r.timing_ms, notice=r.notice,
+                                   annotated_jpeg=encode_image(fit_within(r.annotated, ANNOTATED_MAX_SIDE))))
         except InvalidImageError as exc:
             items.append(BatchItem(name, stem, False, error=str(exc)))
         except Exception as exc:  # one bad image must not stop the whole batch

@@ -7,7 +7,7 @@ import streamlit as st
 from src.app.common import (PREVIEW_MAX_SIDE, counts_chart, current_settings, detect_cached, get_engine,
                             image_input, load_result_json)
 from src.inference.image_processor import BASELINE, YOLO, InvalidImageError
-from src.inference.visualization import detection_rows, fit_within, timing_rows, to_rgb
+from src.inference.visualization import detection_rows, fit_within, scale_detections, timing_rows, to_rgb
 from src.utils.detections import count_by_class, draw_detections
 
 EXPLORER_MIN_CONF = 0.05
@@ -89,7 +89,7 @@ def _explorer(engine) -> None:
     kept = [d for d in res.detections if d.confidence >= conf]
     counts = count_by_class(kept, engine.classes)
     left, right = st.columns([3, 2])
-    left.image(to_rgb(fit_within(draw_detections(res.image, kept), PREVIEW_MAX_SIDE)),
+    left.image(to_rgb(fit_within(draw_detections(res.image, scale_detections(kept, res.preview_scale)), PREVIEW_MAX_SIDE)),
                caption=f"{len(kept)} fruit(s) with confidence ≥ {conf:.2f}", width="stretch")
     with right:
         st.markdown("**Fruits kept vs threshold**")
@@ -107,7 +107,7 @@ def _explorer(engine) -> None:
     st.subheader("Same image, OpenCV baseline")
     base = detect_cached(data, name, BASELINE, None, None, None, True, False)
     a, b = st.columns(2)
-    a.image(to_rgb(fit_within(draw_detections(res.image, kept), 900)),
+    a.image(to_rgb(fit_within(draw_detections(res.image, scale_detections(kept, res.preview_scale)), 900)),
             caption=f"YOLO11n: {len(kept)} fruit(s), {res.timing_ms['detector_total']:.0f} ms", width="stretch")
     b.image(to_rgb(fit_within(base.annotated, 900)),
             caption=f"OpenCV baseline: {base.total} fruit(s), {base.timing_ms['detector_total']:.0f} ms", width="stretch")

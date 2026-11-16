@@ -92,7 +92,8 @@ def _show_batch(batch: BatchResult) -> None:
     d1, d2, d3 = st.columns(3)
     d1.download_button("Download all results (ZIP)", batch.to_zip(), f"bototoy_batch_{timestamp()}.zip",
                        "application/zip", icon=":material/folder_zip:", width="stretch",
-                       help="Annotated images + results.csv + summary.json (all detections with boxes).")
+                       help="Annotated images (longest side up to 2048 px) + results.csv + summary.json "
+                            "(all detections, boxes in original-image pixels).")
     d2.download_button("Download table (CSV)", batch.to_csv(), "bototoy_batch_results.csv", "text/csv",
                        icon=":material/table:", width="stretch")
     if d3.button("Save to outputs/app/", icon=":material/save:", width="stretch", key="batch_save"):

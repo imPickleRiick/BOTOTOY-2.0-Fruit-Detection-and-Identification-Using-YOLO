@@ -175,3 +175,30 @@ def test_batch_limits(engine_without_yolo):
         process_batch([], engine_without_yolo, BASELINE)
     with pytest.raises(ValueError, match="limit"):
         process_batch([("x.jpg", b"")] * (MAX_BATCH_IMAGES + 1), engine_without_yolo, BASELINE)
+
+
+# ----------------------------------------------------------------------------- memory (regression)
+def _big_photo() -> np.ndarray:
+    return cv2.resize(cv2.imread(str(SAMPLE)), (4000, 3000))  # 12-megapixel, like a phone photo
+
+
+def test_display_copy_is_small_but_download_is_full_resolution(engine_without_yolo, tmp_path):
+    """Regression: the app cached full 12 MP arrays (~72 MB per result) and could exhaust a laptop's RAM."""
+    import pickle
+    res = engine_without_yolo.run(_big_photo(), method=BASELINE)
+    d = res.for_display(1600)
+    assert max(d.image.shape[:2]) == 1600 and d.annotated.shape == d.image.shape
+    assert len(pickle.dumps(d)) < 20e6 < len(pickle.dumps(res))
+    full = cv2.imdecode(np.frombuffer(d.annotated_bytes(), np.uint8), cv2.IMREAD_COLOR)
+    assert full.shape == (3000, 4000, 3)
+    assert d.summary()["image_size"] == [4000, 3000] and d.detections == res.detections
+    assert cv2.imread(str(save_result(d, tmp_path, "big")["image"])).shape == (3000, 4000, 3)
+
+
+def test_batch_caps_annotated_size_but_keeps_original_coordinates(engine_without_yolo):
+    from src.inference.batch_processor import ANNOTATED_MAX_SIDE
+    batch = process_batch([("big.jpg", encode(_big_photo(), ".jpg"))], engine_without_yolo, BASELINE)
+    item = batch.items[0]
+    img = cv2.imdecode(np.frombuffer(item.annotated_jpeg, np.uint8), cv2.IMREAD_COLOR)
+    assert max(img.shape[:2]) == ANNOTATED_MAX_SIDE and item.image_size == (4000, 3000)
+    assert batch.to_zip() is batch.to_zip()  # built once

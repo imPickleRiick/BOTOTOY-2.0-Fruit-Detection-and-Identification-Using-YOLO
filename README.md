@@ -25,7 +25,7 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 | 3. OpenCV baseline | ✅ Done ([baseline report](outputs/baseline/BASELINE_REPORT.md)) |
 | 4. YOLO11n training (Google Colab GPU) and evaluation | ✅ Done ([training](outputs/yolo/training/TRAINING_REPORT.md), [test evaluation](outputs/yolo/eval_test/EVALUATION.md), [baseline vs YOLO](outputs/comparisons/test/COMPARISON.md)) |
 | 5. Streamlit user interface | ✅ Done (`streamlit run app.py`) |
-| 6. Integration and end-to-end testing | ⏳ Not started |
+| 6. Integration and end-to-end testing | ✅ Done ([system test report](outputs/reports/system_test/SYSTEM_TEST_REPORT.md)) |
 | 7. Final documentation | ⏳ Not started |
 
 This README is updated at the end of each phase and only describes features that already work.
@@ -237,8 +237,22 @@ It still misses the accuracy targets. Why:
 ## Tests
 
 ```bash
+# Unit and page tests (76 tests, ~20 s)
 python -m pytest
+
+# End-to-end system test (~4 min): every part of the system on this computer, the app's inference path
+# re-run on the whole test split, 12 unseen photos, timing and memory -> outputs/reports/system_test/
+python -m src.evaluation.system_test            # add --quick to skip the test-split re-run
 ```
+
+Latest result on the team laptop (AMD Ryzen 5 5600U, 5.9 GB RAM, CPU only): **16/16 checks passed**,
+and a browser end-to-end run (real uploads and downloads) passed 11/11 steps. YOLO11n takes about 66 ms per
+640 px image (95th percentile 77 ms), and named the right fruit in 11 of 12 unseen photos from Wikimedia
+Commons (`assets/unseen/`). See the [system test report](outputs/reports/system_test/SYSTEM_TEST_REPORT.md).
+
+**Large photos:** phone photos (12 MP and more) are supported. The app keeps a 1600 px preview plus the
+full-resolution annotated JPEG for download, so memory stays low; batch outputs are saved at up to 2048 px
+(box coordinates in the CSV/JSON always refer to the original image).
 
 ---
 
@@ -248,6 +262,7 @@ python -m pytest
 ├── app.py                      # Streamlit app entry point (streamlit run app.py)
 ├── config/config.yaml          # all paths and parameters
 ├── assets/samples/             # 8 demo images from the test split (CC0)
+├── assets/unseen/              # 12 public-domain photos from outside the dataset (system test)
 ├── notebooks/train_yolo_colab.ipynb   # YOLO11n training on Google Colab
 ├── data/
 │   ├── splits/                 # committed split file lists + summary
@@ -274,7 +289,8 @@ python -m pytest
 │   │   ├── evaluate.py            # metrics, timing, error analysis (test locked)
 │   │   └── training_report.py     # import Colab results, verify + install weights
 │   ├── evaluation/
-│   │   └── compare_methods.py     # baseline vs YOLO on the same images
+│   │   ├── compare_methods.py     # baseline vs YOLO on the same images
+│   │   └── system_test.py         # end-to-end system test + report
 │   ├── inference/
 │   │   ├── image_processor.py     # decode upload, run YOLO or baseline (with fallback), timing
 │   │   ├── batch_processor.py     # many images, summary, CSV/ZIP, command-line tool
@@ -292,7 +308,8 @@ python -m pytest
 │   ├── reports/dataset/        # audit report, charts, samples
 │   ├── baseline/               # calibration, evaluation, demo outputs, report
 │   ├── yolo/                   # training report + curves, val and test evaluations
-│   └── comparisons/test/       # baseline vs YOLO11n on the test split
+│   ├── comparisons/test/       # baseline vs YOLO11n on the test split
+│   └── reports/system_test/    # end-to-end test report, unseen-photo results, screenshots
 ├── tests/
 └── requirements.txt
 ```

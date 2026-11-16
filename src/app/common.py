@@ -15,8 +15,7 @@ import streamlit as st
 from src.inference.image_processor import (BASELINE, METHOD_LABELS, SUPPORTED_FORMATS, SUPPORTED_FORMATS_TEXT,
                                            YOLO, FruitDetectionEngine, InferenceResult, InvalidImageError,
                                            save_result)
-from src.inference.visualization import (count_rows, detection_rows, encode_image, fit_within, safe_stem,
-                                         timing_rows, to_rgb)
+from src.inference.visualization import detection_rows, fit_within, safe_stem, timing_rows, to_rgb
 from src.utils.helpers import PROJECT_ROOT, load_json
 from src.utils.image_utils import CLASS_CHART_COLORS_HEX
 
@@ -42,15 +41,17 @@ def get_engine() -> FruitDetectionEngine:
     return FruitDetectionEngine()
 
 
-@st.cache_data(max_entries=24, show_spinner=False)
+@st.cache_data(max_entries=12, show_spinner=False)
 def detect_cached(data: bytes, name: str, method: str, conf: float | None, iou: float | None, imgsz: int | None,
                   show_confidence: bool, keep_stages: bool) -> InferenceResult:
     """Run detection once per (image, settings); re-showing a result does not re-run the model.
 
-    The timings shown are the ones measured when the detection actually ran.
+    The timings shown are the ones measured when the detection actually ran. Only a compact copy is
+    cached (previews + JPEG), so phone photos do not fill the laptop's memory.
     """
-    return get_engine().run_bytes(data, name, method=method, conf=conf, iou=iou, imgsz=imgsz,
-                                  show_confidence=show_confidence, keep_stages=keep_stages)
+    result = get_engine().run_bytes(data, name, method=method, conf=conf, iou=iou, imgsz=imgsz,
+                                    show_confidence=show_confidence, keep_stages=keep_stages)
+    return result.for_display(PREVIEW_MAX_SIDE)
 
 
 def run_detection(data: bytes, name: str, method: str, settings: dict, keep_stages: bool = False) -> InferenceResult | None:
@@ -201,7 +202,7 @@ def show_result(result: InferenceResult, name: str, key: str, allow_save: bool =
 
     stem = safe_stem(name)
     d1, d2, d3 = st.columns(3)
-    d1.download_button("Download annotated image", encode_image(result.annotated), f"{stem}_{result.method}.jpg",
+    d1.download_button("Download annotated image", result.annotated_bytes(), f"{stem}_{result.method}.jpg",
                        "image/jpeg", icon=":material/download:", key=f"{key}_dl_img", width="stretch")
     import json
     d2.download_button("Download results (JSON)", json.dumps(result.summary(name), indent=2),

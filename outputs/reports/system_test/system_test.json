@@ -1,0 +1,695 @@
+{
+  "date": "2026-11-17 06:22",
+  "system": {
+    "OS": "Windows-11-10.0.26200-SP0",
+    "CPU": "AMD Ryzen 5 5600U with Radeon Graphics (12 threads)",
+    "RAM": "5.9 GB",
+    "GPU": "none used (CPU inference)",
+    "Python": "3.12.7",
+    "PyTorch": "2.15.0+cpu",
+    "Ultralytics": "8.4.215",
+    "OpenCV": "5.0.0",
+    "Streamlit": "1.67.0"
+  },
+  "summary": {
+    "PASS": 16,
+    "FAIL": 0,
+    "SKIP": 0,
+    "total": 16
+  },
+  "checks": [
+    {
+      "id": "dataset_loading",
+      "requirement": "Dataset loading",
+      "test": "Split folders vs committed manifests, every image has a label file, data.yaml, all labels parse",
+      "status": "PASS",
+      "details": "train 7108, val 686, test 682 images; all labels parse; class names match",
+      "evidence": {
+        "images_per_split": {
+          "train": 7108,
+          "val": 686,
+          "test": 682
+        },
+        "data_yaml_classes": [
+          "Apple",
+          "Banana",
+          "Grape",
+          "Orange",
+          "Pineapple",
+          "Watermelon"
+        ]
+      }
+    },
+    {
+      "id": "model_loading",
+      "requirement": "Model loading",
+      "test": "Load both detectors, time it, verify YOLO classes and that the weights' SHA-256 matches training",
+      "status": "PASS",
+      "details": "YOLO11n + baseline loaded in 6.2 s (incl. warm-up); 6 classes match; checksum matches the training run",
+      "evidence": {
+        "load_seconds_incl_warmup": 6.24,
+        "weights": "models/trained/bototoy_yolo11n.pt",
+        "sha256": "6ce70859560111e7fe252ab43b8e797671453b3ee7cb8e555c28ff239a6a6f29",
+        "sha256_from_training": "6ce70859560111e7fe252ab43b8e797671453b3ee7cb8e555c28ff239a6a6f29",
+        "parameters": 2606098,
+        "error": null
+      }
+    },
+    {
+      "id": "fallback",
+      "requirement": "Working fallback (YOLO unavailable)",
+      "test": "Engine with a missing weights file must still detect, using the OpenCV baseline, and say so",
+      "status": "PASS",
+      "details": "method used: baseline; notice: YOLO11n is not available (Trained weights not found: <project>\\outputs\\reports\\system_test\\_tmp\\missing.pt. Train the model (see README) or copy best.pt there.). The OpenCV baseline was used instead.",
+      "evidence": {}
+    },
+    {
+      "id": "opencv_preprocessing",
+      "requirement": "OpenCV preprocessing",
+      "test": "preprocess() on 4000x3000, 640x640 and 300x900 images: longest side 640, HSV ranges valid, box scale",
+      "status": "PASS",
+      "details": "4000x3000 -> 640x480 (scale 0.160); 640x640 -> 640x640 (scale 1.000); 300x900 -> 213x640 (scale 0.711)",
+      "evidence": {}
+    },
+    {
+      "id": "baseline_detection",
+      "requirement": "OpenCV detection",
+      "test": "8 demo images, each run twice: same result (deterministic), boxes inside the image, valid classes",
+      "status": "PASS",
+      "details": "27 fruits on 8 images; deterministic; boxes and classes valid",
+      "evidence": {
+        "fruits_per_image": {
+          "apples_bananas_grayscale.jpg": 0,
+          "apples_on_tree.jpg": 1,
+          "bananas_in_box.jpg": 3,
+          "grapes_in_vineyard.jpg": 2,
+          "mixed_fruit_bowl.jpg": 3,
+          "oranges_in_bowls.jpg": 2,
+          "pineapples_at_market.jpg": 5,
+          "watermelon_slices.jpg": 11
+        }
+      }
+    },
+    {
+      "id": "yolo_detection",
+      "requirement": "YOLO inference",
+      "test": "8 demo images, each run twice: same result (deterministic), boxes inside the image, valid classes, confidence >= threshold",
+      "status": "PASS",
+      "details": "20 fruits on 8 images; deterministic; boxes and classes valid",
+      "evidence": {
+        "fruits_per_image": {
+          "apples_bananas_grayscale.jpg": 3,
+          "apples_on_tree.jpg": 4,
+          "bananas_in_box.jpg": 1,
+          "grapes_in_vineyard.jpg": 3,
+          "mixed_fruit_bowl.jpg": 2,
+          "oranges_in_bowls.jpg": 3,
+          "pineapples_at_market.jpg": 2,
+          "watermelon_slices.jpg": 2
+        }
+      }
+    },
+    {
+      "id": "integration_test_split",
+      "requirement": "Single-image processing reproduces the evaluated results",
+      "test": "Run the app's inference path (decode upload bytes -> engine) on all test images and compare precision, recall and counting with the Phase 4 evaluation",
+      "status": "PASS",
+      "details": "682 test images: precision 0.6681 (eval 0.6681), recall 0.4104 (0.4104), exact count 45.0% (45.0%), count MAE 2.213 (2.213)",
+      "evidence": {
+        "images": 682,
+        "app_path": {
+          "precision@0.5": 0.6681,
+          "recall@0.5": 0.4104,
+          "mean_absolute_count_error": 2.213,
+          "exact_count_rate": 0.4501
+        },
+        "phase4_evaluation": {
+          "precision@0.5": 0.6681,
+          "recall@0.5": 0.4104,
+          "mean_absolute_count_error": 2.213,
+          "exact_count_rate": 0.4501
+        }
+      }
+    },
+    {
+      "id": "single_image_formats",
+      "requirement": "Single-image processing: file formats and photo types",
+      "test": "Same photo as JPG/PNG/BMP/WEBP, grayscale, transparent PNG, phone photo with EXIF rotation, 12-megapixel photo, panorama",
+      "status": "PASS",
+      "details": "PNG: 3 fruits, identical to original: True; BMP: 3 fruits, identical to original: True; JPG (re-compressed): 3 fruits; WEBP (re-compressed): 1 fruits; Grayscale PNG: 4 fruits, decoded as 3 channels; Transparent PNG: 3 fruits, transparent area shown white: True; Phone photo with EXIF rotation: 3 fruits, shown upright: True; 12-megapixel photo (4000x3000): 2 fruits, 235 ms end-to-end; Panorama (2400x400): 0 fruits",
+      "evidence": {
+        "PNG": "3 fruits, identical to original: True",
+        "BMP": "3 fruits, identical to original: True",
+        "JPG (re-compressed)": "3 fruits",
+        "WEBP (re-compressed)": "1 fruits",
+        "Grayscale PNG": "4 fruits, decoded as 3 channels",
+        "Transparent PNG": "3 fruits, transparent area shown white: True",
+        "Phone photo with EXIF rotation": "3 fruits, shown upright: True",
+        "12-megapixel photo (4000x3000)": "2 fruits, 235 ms end-to-end",
+        "Panorama (2400x400)": "0 fruits"
+      }
+    },
+    {
+      "id": "batch_processing",
+      "requirement": "Batch image processing",
+      "test": "8 demo images + 1 corrupt + 1 empty file: per-image results, failures reported, combined counts, CSV and ZIP contents",
+      "status": "PASS",
+      "details": "8 processed, 2 reported as errors, 20 fruits, mean 71.3 ms/image, ZIP has 10 files (8 annotated + CSV + JSON)",
+      "evidence": {
+        "succeeded": 8,
+        "failed": [
+          "corrupt.jpg: not a readable image. Supported formats: JPG, PNG, BMP, WEBP.",
+          "empty.png: the file is empty."
+        ],
+        "combined_counts": {
+          "Apple": 6,
+          "Banana": 2,
+          "Grape": 5,
+          "Orange": 3,
+          "Pineapple": 2,
+          "Watermelon": 2
+        },
+        "timing": {
+          "mean_ms": 71.3,
+          "median_ms": 67.5,
+          "max_ms": 87.4,
+          "wall_time_ms": 594.0
+        },
+        "zip_files": 10
+      }
+    },
+    {
+      "id": "bbox_visualization",
+      "requirement": "Bounding box visualization",
+      "test": "On every demo image, each box's outline is visible in its class color (at least 10 pixels, since overlapping boxes can hide parts of each other); labels on/off differ",
+      "status": "PASS",
+      "details": "20 boxes: outline drawn in the class color",
+      "evidence": {}
+    },
+    {
+      "id": "classification_counting",
+      "requirement": "Fruit classification and counting",
+      "test": "For every result: labels are among the 6 classes, per-class counts = detections of that class, total = number of boxes (YOLO, baseline, 12 unseen photos)",
+      "status": "PASS",
+      "details": "40 results checked",
+      "evidence": {}
+    },
+    {
+      "id": "confidence_display",
+      "requirement": "Confidence score display",
+      "test": "Confidences in [0, 1], at least the threshold, shown in the table and JSON; threshold 0.05 keeps at least as many boxes as 0.25 and 0.50",
+      "status": "PASS",
+      "details": "fruits kept at confidence 0.05 / 0.25 / 0.50: 16 / 3 / 0",
+      "evidence": {
+        "fruits_at_threshold": {
+          "0.05": 16,
+          "0.25": 3,
+          "0.5": 0
+        }
+      }
+    },
+    {
+      "id": "annotated_saving",
+      "requirement": "Annotated image saving",
+      "test": "save_result() and save_batch() write readable JPGs at full resolution plus JSON/CSV",
+      "status": "PASS",
+      "details": "single: 4000x3000 JPG + JSON; batch: 3 JPGs + results.csv + summary.json",
+      "evidence": {}
+    },
+    {
+      "id": "error_handling",
+      "requirement": "Error handling",
+      "test": "Empty, non-image, truncated JPEG, 10x10 and 60-megapixel files; unknown method; too many batch images",
+      "status": "PASS",
+      "details": "all rejected with a clear message",
+      "evidence": {
+        "empty file": "empty file: the file is empty.",
+        "text file renamed .jpg": "text file renamed .jpg: not a readable image. Supported formats: JPG, PNG, BMP, WEBP.",
+        "truncated JPEG": "truncated JPEG: not a readable image. Supported formats: JPG, PNG, BMP, WEBP.",
+        "10x10 image": "10x10 image: image is too small (10x10); each side must be at least 32 px.",
+        "60+ megapixel image": "60+ megapixel image: image is too large (9000x7000); the limit is 50 megapixels.",
+        "unknown method": "Unknown method 'sift'; use 'yolo' or 'baseline'",
+        "101 images in one batch": "Too many images (101); the limit is 100 per batch."
+      }
+    },
+    {
+      "id": "cpu_compatibility",
+      "requirement": "CPU compatibility",
+      "test": "Inference device and CUDA availability on this computer",
+      "status": "PASS",
+      "details": "runs on CPU (device 'cpu', CUDA available: False, 8 PyTorch threads)",
+      "evidence": {
+        "device": "cpu",
+        "cuda_available": false,
+        "torch": "2.15.0+cpu",
+        "torch_threads": 8
+      }
+    },
+    {
+      "id": "ui_pages",
+      "requirement": "User interface: pages, downloads and evaluation display",
+      "test": "Render every page headlessly; detection page offers both downloads; Evaluation page shows the numbers stored in metrics.json",
+      "status": "PASS",
+      "details": "7 pages render without errors; 2 download buttons; Evaluation shows mAP@0.50 = 0.490 (same as metrics.json)",
+      "evidence": {
+        "detection_download_buttons": 2,
+        "evaluation_mAP50": "0.490"
+      }
+    }
+  ],
+  "performance": {
+    "images": "100 test-split images (640x640)",
+    "yolo_320px": {
+      "mean_ms": 34.6,
+      "median_ms": 32.4,
+      "p95_ms": 47.1,
+      "max_ms": 59.5
+    },
+    "yolo_640px": {
+      "mean_ms": 65.9,
+      "median_ms": 64.4,
+      "p95_ms": 76.7,
+      "max_ms": 92.1
+    },
+    "yolo_960px": {
+      "mean_ms": 134.9,
+      "median_ms": 130.1,
+      "p95_ms": 180.1,
+      "max_ms": 241.2
+    },
+    "baseline": {
+      "mean_ms": 26.8,
+      "median_ms": 26.9,
+      "p95_ms": 37.5,
+      "max_ms": 44.9
+    },
+    "12MP_photo": {
+      "yolo": 135.95,
+      "baseline": 197.47
+    },
+    "batch": {
+      "images": 100,
+      "wall_seconds": 6.7,
+      "images_per_second": 14.9,
+      "failed": 0
+    },
+    "peak_memory_mb": 722.6
+  },
+  "unseen": [
+    {
+      "image": "apples_in_basket.jpg",
+      "expected": [
+        "Apple"
+      ],
+      "yolo": {
+        "counts": {
+          "Apple": 1
+        },
+        "total": 1,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 64.79
+      },
+      "baseline": {
+        "counts": {
+          "Apple": 1,
+          "Pineapple": 1
+        },
+        "total": 2,
+        "expected_found": true,
+        "other_classes": [
+          "Pineapple"
+        ],
+        "ms": 80.91
+      }
+    },
+    {
+      "image": "apples_supermarket_display.jpg",
+      "expected": [
+        "Apple"
+      ],
+      "yolo": {
+        "counts": {
+          "Apple": 1
+        },
+        "total": 1,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 86.44
+      },
+      "baseline": {
+        "counts": {
+          "Banana": 2,
+          "Grape": 2,
+          "Pineapple": 2,
+          "Watermelon": 2
+        },
+        "total": 8,
+        "expected_found": false,
+        "other_classes": [
+          "Banana",
+          "Grape",
+          "Pineapple",
+          "Watermelon"
+        ],
+        "ms": 86.59
+      }
+    },
+    {
+      "image": "three_bananas.jpg",
+      "expected": [
+        "Banana"
+      ],
+      "yolo": {
+        "counts": {
+          "Banana": 1
+        },
+        "total": 1,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 62.52
+      },
+      "baseline": {
+        "counts": {
+          "Banana": 2
+        },
+        "total": 2,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 36.33
+      }
+    },
+    {
+      "image": "bananas_market_stall.jpg",
+      "expected": [
+        "Banana"
+      ],
+      "yolo": {
+        "counts": {
+          "Banana": 1
+        },
+        "total": 1,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 57.25
+      },
+      "baseline": {
+        "counts": {
+          "Grape": 1,
+          "Orange": 1
+        },
+        "total": 2,
+        "expected_found": false,
+        "other_classes": [
+          "Grape",
+          "Orange"
+        ],
+        "ms": 46.76
+      }
+    },
+    {
+      "image": "grape_bunch_mixed_colors.jpg",
+      "expected": [
+        "Grape"
+      ],
+      "yolo": {
+        "counts": {
+          "Grape": 1
+        },
+        "total": 1,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 98.16
+      },
+      "baseline": {
+        "counts": {
+          "Banana": 5,
+          "Grape": 1,
+          "Orange": 1,
+          "Pineapple": 1
+        },
+        "total": 8,
+        "expected_found": true,
+        "other_classes": [
+          "Banana",
+          "Orange",
+          "Pineapple"
+        ],
+        "ms": 73.87
+      }
+    },
+    {
+      "image": "green_grapes_on_vine.jpg",
+      "expected": [
+        "Grape"
+      ],
+      "yolo": {
+        "counts": {
+          "Grape": 3
+        },
+        "total": 3,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 86.2
+      },
+      "baseline": {
+        "counts": {
+          "Banana": 4
+        },
+        "total": 4,
+        "expected_found": false,
+        "other_classes": [
+          "Banana"
+        ],
+        "ms": 56.57
+      }
+    },
+    {
+      "image": "oranges_whole_and_halved.jpg",
+      "expected": [
+        "Orange"
+      ],
+      "yolo": {
+        "counts": {
+          "Orange": 1
+        },
+        "total": 1,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 104.38
+      },
+      "baseline": {
+        "counts": {
+          "Orange": 1,
+          "Watermelon": 1
+        },
+        "total": 2,
+        "expected_found": true,
+        "other_classes": [
+          "Watermelon"
+        ],
+        "ms": 81.52
+      }
+    },
+    {
+      "image": "mandarins_on_plate.jpg",
+      "expected": [
+        "Orange"
+      ],
+      "yolo": {
+        "counts": {
+          "Orange": 3
+        },
+        "total": 3,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 83.92
+      },
+      "baseline": {
+        "counts": {
+          "Orange": 2
+        },
+        "total": 2,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 64.28
+      }
+    },
+    {
+      "image": "oranges_on_tree.jpg",
+      "expected": [
+        "Orange"
+      ],
+      "yolo": {
+        "counts": {
+          "Orange": 2
+        },
+        "total": 2,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 87.01
+      },
+      "baseline": {
+        "counts": {
+          "Orange": 6
+        },
+        "total": 6,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 49.48
+      }
+    },
+    {
+      "image": "green_unripe_orange.jpg",
+      "expected": [
+        "Orange"
+      ],
+      "yolo": {
+        "counts": {
+          "Apple": 1
+        },
+        "total": 1,
+        "expected_found": false,
+        "other_classes": [
+          "Apple"
+        ],
+        "ms": 81.11
+      },
+      "baseline": {
+        "counts": {
+          "Banana": 1
+        },
+        "total": 1,
+        "expected_found": false,
+        "other_classes": [
+          "Banana"
+        ],
+        "ms": 30.23
+      }
+    },
+    {
+      "image": "single_pineapple.jpg",
+      "expected": [
+        "Pineapple"
+      ],
+      "yolo": {
+        "counts": {
+          "Pineapple": 1
+        },
+        "total": 1,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 71.86
+      },
+      "baseline": {
+        "counts": {
+          "Grape": 4,
+          "Pineapple": 1
+        },
+        "total": 5,
+        "expected_found": true,
+        "other_classes": [
+          "Grape"
+        ],
+        "ms": 78.71
+      }
+    },
+    {
+      "image": "yellow_watermelon_halves.jpg",
+      "expected": [
+        "Watermelon"
+      ],
+      "yolo": {
+        "counts": {
+          "Watermelon": 2
+        },
+        "total": 2,
+        "expected_found": true,
+        "other_classes": [],
+        "ms": 64.42
+      },
+      "baseline": {
+        "counts": {
+          "Banana": 1,
+          "Orange": 1
+        },
+        "total": 2,
+        "expected_found": false,
+        "other_classes": [
+          "Banana",
+          "Orange"
+        ],
+        "ms": 39.85
+      }
+    }
+  ],
+  "bugs_fixed": [
+    "**Memory (critical):** the app cached full-resolution arrays; one 12-megapixel photo used 72 MB (baseline 112 MB) and up to 24 were cached, enough to exhaust a 6 GB laptop. The cache now keeps 1600 px previews plus the full-resolution annotated JPEG (12 MB / 18 MB per photo, at most 12 cached), batch outputs are capped at 2048 px (boxes stay in original pixels) and the batch ZIP is built once. Covered by regression tests."
+  ],
+  "browser_e2e": {
+    "description": "Automated with a headless Chromium browser (Playwright API) against `streamlit run app.py` on this computer: real file-picker uploads, real downloads saved to disk and checked.",
+    "date": "2026-11-16 22:20",
+    "steps": [
+      {
+        "step": "Open the app (Dashboard)",
+        "ok": true,
+        "detail": "YOLO11n status \"Ready\", test mAP@0.50 0.490"
+      },
+      {
+        "step": "Upload a photo (file picker) and detect with YOLO11n",
+        "ok": true,
+        "detail": "mandarins_on_plate.jpg: 3 fruit(s), end-to-end 228 ms"
+      },
+      {
+        "step": "Download the annotated image",
+        "ok": true,
+        "detail": "mandarins_on_plate_yolo.jpg, JPEG, 481 KB"
+      },
+      {
+        "step": "Download the results (JSON)",
+        "ok": true,
+        "detail": "mandarins_on_plate_yolo.json: total 3, 3 detections with class, confidence and box, method YOLO11n"
+      },
+      {
+        "step": "Upload a non-image file",
+        "ok": true,
+        "detail": "error shown: \"not_an_image.jpg: not a readable image. Supported formats: JPG, PNG, BMP, WEBP.\""
+      },
+      {
+        "step": "Switch model to the OpenCV baseline (sidebar)",
+        "ok": true,
+        "detail": "single_pineapple.jpg: 5 fruit(s) with the baseline"
+      },
+      {
+        "step": "Batch: upload 4 files (1 invalid) and process",
+        "ok": true,
+        "detail": "3 processed, 1 failed (reported), 5 fruits, mean 99 ms"
+      },
+      {
+        "step": "Download the batch ZIP",
+        "ok": true,
+        "detail": "bototoy_batch_20261117-062007.zip: 866 KB, contains 5/5 expected files"
+      },
+      {
+        "step": "Download the batch table (CSV)",
+        "ok": true,
+        "detail": "4 rows (one per file, the invalid one marked \"error\")"
+      },
+      {
+        "step": "Model Evaluation page shows the final test results",
+        "ok": true,
+        "detail": "mAP@0.50 shown: 0.490"
+      },
+      {
+        "step": "No browser console errors",
+        "ok": true,
+        "detail": "none"
+      }
+    ],
+    "screenshots": [
+      "screenshots/detection_upload.png",
+      "screenshots/batch.png",
+      "screenshots/evaluation.png"
+    ]
+  }
+}

@@ -75,6 +75,14 @@ def safe_stem(filename: str) -> str:
     return stem[:80] or "image"
 
 
+def scale_detections(dets: list[Detection], scale: float) -> list[Detection]:
+    """Boxes converted to a resized copy of the image (e.g. a preview), for drawing only."""
+    if scale == 1.0:
+        return dets
+    return [Detection(d.class_name, d.confidence, tuple(int(round(v * scale)) for v in d.box), d.class_id, d.extra)
+            for d in dets]
+
+
 def detection_rows(dets: list[Detection], include_rule: bool = False) -> list[dict]:
     """One row per detected fruit: class, confidence and box in pixels of the original image."""
     rows = []

@@ -22,7 +22,6 @@ import numpy as np
 from src.baseline.pipeline import BaselineDetector
 from src.utils.detections import Detection, draw_detections
 from src.utils.helpers import PROJECT_ROOT, ensure_dir, load_config, resolve_path, save_json
-from src.utils.image_utils import write_image
 
 YOLO, BASELINE = "yolo", "baseline"
 METHOD_LABELS = {YOLO: "YOLO11n", BASELINE: "OpenCV baseline"}
@@ -30,6 +29,15 @@ SUPPORTED_FORMATS = ("jpg", "jpeg", "png", "bmp", "webp")
 SUPPORTED_FORMATS_TEXT = "JPG, PNG, BMP, WEBP"
 MAX_PIXELS = 50_000_000   # ~50 megapixels: larger files are rejected instead of exhausting memory
 MIN_SIDE = 32             # smaller images carry too little detail to detect anything
+
+
+STAGE_MAX_SIDE = 800      # baseline step images in display copies
+
+
+def _fit(image: np.ndarray, max_side: int) -> np.ndarray:
+    h, w = image.shape[:2]
+    s = max_side / max(h, w)
+    return image if s >= 1 else cv2.resize(image, (round(w * s), round(h * s)), interpolation=cv2.INTER_AREA)
 
 
 class InvalidImageError(ValueError):
@@ -79,14 +87,49 @@ class InferenceResult:
     notice: str | None = None           # e.g. why the baseline was used instead of YOLO
     stages: dict[str, np.ndarray] = field(default_factory=dict)  # baseline step images
     regions: list[dict] = field(default_factory=list)            # baseline candidate regions
+    # Set by for_display(): `image`/`annotated` are then downscaled previews, the full-resolution
+    # annotated image is kept JPEG-compressed, and boxes stay in original-image pixels.
+    annotated_jpeg: bytes | None = None
+    preview_scale: float = 1.0
+    original_size: tuple[int, int] | None = None  # (width, height)
 
     @property
     def method_label(self) -> str:
         return METHOD_LABELS[self.method]
 
+    @property
+    def image_size(self) -> tuple[int, int]:
+        if self.original_size:
+            return self.original_size
+        h, w = self.image.shape[:2]
+        return w, h
+
+    def annotated_bytes(self) -> bytes:
+        """Full-resolution annotated image as JPEG (for downloads and saving)."""
+        if self.annotated_jpeg is not None:
+            return self.annotated_jpeg
+        ok, buf = cv2.imencode(".jpg", self.annotated, [cv2.IMWRITE_JPEG_QUALITY, 92])
+        if not ok:
+            raise ValueError("Could not encode the annotated image")
+        return buf.tobytes()
+
+    def for_display(self, max_side: int = 1600) -> "InferenceResult":
+        """Compact copy for the user interface: previews of at most `max_side` px + the full-resolution
+        annotated image as JPEG. A 12-megapixel photo shrinks from ~72 MB to ~15 MB in memory."""
+        w, h = self.image_size
+        scale = min(1.0, max_side / max(w, h))
+        if scale >= 1.0 and self.annotated_jpeg is not None:
+            return self
+        size = (max(1, round(w * scale)), max(1, round(h * scale)))
+        shrink = (lambda im: cv2.resize(im, size, interpolation=cv2.INTER_AREA)) if scale < 1.0 else (lambda im: im)
+        stages = {k: _fit(v, STAGE_MAX_SIDE) for k, v in self.stages.items()}  # shown at 640 px
+        return InferenceResult(self.method, shrink(self.image), shrink(self.annotated), self.detections, self.counts,
+                               self.total, self.timing_ms, self.params, self.notice, stages, self.regions,
+                               annotated_jpeg=self.annotated_bytes(), preview_scale=scale, original_size=(w, h))
+
     def summary(self, name: str | None = None) -> dict:
         """JSON-serializable summary (used for downloads and saved results)."""
-        h, w = self.image.shape[:2]
+        w, h = self.image_size
         return {"image": name, "method": self.method_label, "image_size": [w, h], "settings": self.params,
                 "total": self.total, "counts": self.counts,
                 "timing_ms": {k: round(float(v), 2) for k, v in self.timing_ms.items()},
@@ -196,6 +239,6 @@ def save_result(result: InferenceResult, out_dir: str | Path, stem: str) -> dict
     out = ensure_dir(out_dir)
     base = f"{stem}_{result.method}"
     paths = {"image": out / f"{base}.jpg", "json": out / f"{base}.json"}
-    write_image(paths["image"], result.annotated)
+    paths["image"].write_bytes(result.annotated_bytes())  # full resolution, even for display copies
     save_json(result.summary(stem), paths["json"])
     return paths
