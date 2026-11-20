@@ -1,0 +1,127 @@
+{
+  "split": "test",
+  "images": 682,
+  "operating_point": {
+    "conf": 0.25,
+    "iou_nms": 0.7
+  },
+  "ground_truth": 2369,
+  "predictions": 1224,
+  "true_positives": 808,
+  "false_positives": 416,
+  "missed": 1561,
+  "fp_by_category": {
+    "wrong_class": 23,
+    "group_box": 79,
+    "inside_group_label": 54,
+    "duplicate": 17,
+    "poor_box": 57,
+    "background": 186
+  },
+  "fn_by_category": {
+    "wrong_class": 22,
+    "covered_by_group": 778,
+    "poor_box": 45,
+    "small": 469,
+    "not_detected": 247
+  },
+  "fp_by_class": {
+    "Apple": {
+      "group_box": 13,
+      "background": 35,
+      "poor_box": 10,
+      "wrong_class": 6,
+      "inside_group_label": 14,
+      "duplicate": 1
+    },
+    "Banana": {
+      "background": 27,
+      "group_box": 10,
+      "wrong_class": 4,
+      "poor_box": 7,
+      "inside_group_label": 4,
+      "duplicate": 1
+    },
+    "Grape": {
+      "background": 41,
+      "group_box": 26,
+      "poor_box": 19,
+      "duplicate": 10,
+      "inside_group_label": 14,
+      "wrong_class": 5
+    },
+    "Orange": {
+      "wrong_class": 4,
+      "inside_group_label": 10,
+      "background": 57,
+      "group_box": 24,
+      "poor_box": 8,
+      "duplicate": 2
+    },
+    "Pineapple": {
+      "duplicate": 1,
+      "background": 11,
+      "group_box": 2,
+      "poor_box": 6,
+      "wrong_class": 1
+    },
+    "Watermelon": {
+      "background": 15,
+      "poor_box": 7,
+      "inside_group_label": 12,
+      "group_box": 4,
+      "duplicate": 2,
+      "wrong_class": 3
+    }
+  },
+  "fn_by_class": {
+    "Apple": {
+      "covered_by_group": 180,
+      "wrong_class": 9,
+      "small": 112,
+      "poor_box": 11,
+      "not_detected": 57
+    },
+    "Banana": {
+      "covered_by_group": 92,
+      "small": 26,
+      "not_detected": 40,
+      "poor_box": 4,
+      "wrong_class": 4
+    },
+    "Grape": {
+      "covered_by_group": 150,
+      "small": 169,
+      "not_detected": 53,
+      "poor_box": 19,
+      "wrong_class": 4
+    },
+    "Orange": {
+      "not_detected": 57,
+      "small": 154,
+      "poor_box": 5,
+      "covered_by_group": 317,
+      "wrong_class": 1
+    },
+    "Pineapple": {
+      "small": 7,
+      "not_detected": 18,
+      "covered_by_group": 19,
+      "poor_box": 3,
+      "wrong_class": 1
+    },
+    "Watermelon": {
+      "not_detected": 22,
+      "poor_box": 3,
+      "small": 1,
+      "covered_by_group": 20,
+      "wrong_class": 3
+    }
+  },
+  "images_with_misses": 328,
+  "share_of_misses_in_20_worst_images": 0.402,
+  "sample_size": {
+    "FP": 24,
+    "FN": 24
+  }
+}

@@ -26,9 +26,17 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 | 4. YOLO11n training (Google Colab GPU) and evaluation | ✅ Done ([training](outputs/yolo/training/TRAINING_REPORT.md), [test evaluation](outputs/yolo/eval_test/EVALUATION.md), [baseline vs YOLO](outputs/comparisons/test/COMPARISON.md)) |
 | 5. Streamlit user interface | ✅ Done (`streamlit run app.py`) |
 | 6. Integration and end-to-end testing | ✅ Done ([system test report](outputs/reports/system_test/SYSTEM_TEST_REPORT.md)) |
-| 7. Final documentation | ⏳ Not started |
+| 7. Final documentation | ✅ Done ([final report](docs/FINAL_REPORT.md), [error review](outputs/yolo/eval_test/error_review/ERROR_REVIEW.md), [demo guide](docs/DEMO_GUIDE.md), [defense guide](docs/DEFENSE_GUIDE.md)) |
 
-This README is updated at the end of each phase and only describes features that already work.
+## Documentation
+
+| Document | For |
+|---|---|
+| [Final project report](docs/FINAL_REPORT.md) | The whole project in one place: objectives vs results, data, methods, results, error analysis, limitations |
+| [Error review](outputs/yolo/eval_test/error_review/ERROR_REVIEW.md) | Every false positive and missed fruit on the test set, sorted by cause; 48 inspected by eye |
+| [Presentation and demo guide](docs/DEMO_GUIDE.md) | Presentation outline, live demo script, backup plan |
+| [Defense guide](docs/DEFENSE_GUIDE.md) | Each member's module, how to show it, likely questions |
+| [Dataset audit](outputs/reports/dataset/DATASET_AUDIT.md) · [Baseline report](outputs/baseline/BASELINE_REPORT.md) · [Training report](outputs/yolo/training/TRAINING_REPORT.md) · [Test evaluation](outputs/yolo/eval_test/EVALUATION.md) · [Comparison](outputs/comparisons/test/COMPARISON.md) · [System test](outputs/reports/system_test/SYSTEM_TEST_REPORT.md) | Detailed phase reports |
 
 ---
 
@@ -234,10 +242,15 @@ It still misses the accuracy targets. Why:
 - On controlled, plain-background images, the conditions the proposal targets, test mAP50 is 0.750,
   close to the 0.80 target.
 
+The [error review](outputs/yolo/eval_test/error_review/ERROR_REVIEW.md) sorts all 1,977 test errors by cause.
+Only 2.3% are a wrong fruit name. 49.8% of the missed fruits lie inside a box the model drew around their whole
+group, and 30.0% are smaller than 1% of the image. Reproduce it with
+`python -m src.evaluation.error_review --split test --final`.
+
 ## Tests
 
 ```bash
-# Unit and page tests (76 tests, ~20 s)
+# Unit and page tests (82 tests, ~35 s)
 python -m pytest
 
 # End-to-end system test (~4 min): every part of the system on this computer, the app's inference path
@@ -256,11 +269,12 @@ full-resolution annotated JPEG for download, so memory stays low; batch outputs 
 
 ---
 
-## Project structure (current)
+## Project structure
 
 ```
 ├── app.py                      # Streamlit app entry point (streamlit run app.py)
 ├── config/config.yaml          # all paths and parameters
+├── docs/                       # final report, demo guide, defense guide
 ├── assets/samples/             # 8 demo images from the test split (CC0)
 ├── assets/unseen/              # 12 public-domain photos from outside the dataset (system test)
 ├── notebooks/train_yolo_colab.ipynb   # YOLO11n training on Google Colab
@@ -290,6 +304,7 @@ full-resolution annotated JPEG for download, so memory stays low; batch outputs 
 │   │   └── training_report.py     # import Colab results, verify + install weights
 │   ├── evaluation/
 │   │   ├── compare_methods.py     # baseline vs YOLO on the same images
+│   │   ├── error_review.py        # every FP / missed fruit, sorted by cause
 │   │   └── system_test.py         # end-to-end system test + report
 │   ├── inference/
 │   │   ├── image_processor.py     # decode upload, run YOLO or baseline (with fallback), timing
@@ -307,7 +322,7 @@ full-resolution annotated JPEG for download, so memory stays low; batch outputs 
 ├── outputs/
 │   ├── reports/dataset/        # audit report, charts, samples
 │   ├── baseline/               # calibration, evaluation, demo outputs, report
-│   ├── yolo/                   # training report + curves, val and test evaluations
+│   ├── yolo/                   # training report + curves, val and test evaluations, error review
 │   ├── comparisons/test/       # baseline vs YOLO11n on the test split
 │   └── reports/system_test/    # end-to-end test report, unseen-photo results, screenshots
 ├── tests/
