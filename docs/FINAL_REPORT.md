@@ -21,7 +21,8 @@ On a locked, leakage-free test set of 682 photos, YOLO11n reaches **mAP@0.50 = 0
 0.338**. That is about 10 times the baseline's mAP@0.50 of 0.049, but below the proposal's targets of 0.80 and
 0.50. On plain-background photos, the controlled setting the proposal had in mind, YOLO11n reaches mAP@0.50 =
 0.750. The system runs in **69 ms per image on a laptop CPU** (target: ≤ 1 s), passes all 16 end-to-end system
-checks, and names the right fruit in 11 of 12 photos from outside the dataset.
+checks, and names the right fruit in 11 of 12 photos from outside the dataset. In a test of 132 hard cases (dark,
+blurred, rotated, partly covered, low-quality and grayscale photos), it passes 100, against 68 for the baseline.
 
 An error review of all 1,977 test errors shows that wrong fruit names are rare (2.3%). Most errors come from
 crowded scenes whose labels are inconsistent (one box per fruit in some images, one box per group in others)
@@ -100,25 +101,21 @@ These issues turned out to matter a lot (Section 8).
 
 ## 4. System architecture
 
-```mermaid
-flowchart LR
-    A[Photo<br/>JPG/PNG/BMP/WEBP] --> B[Decode + checks<br/>EXIF rotation, size limits]
-    B --> C{Detector}
-    C -->|main| D[YOLO11n<br/>fine-tuned, CPU]
-    C -->|fallback / comparison| E[OpenCV baseline<br/>HSV + contours + rules]
-    D --> F[Detections<br/>box, class, score]
-    E --> F
-    F --> G[Count per class<br/>+ total]
-    G --> H[Annotated image<br/>JSON / CSV / ZIP]
-    H --> I[Streamlit app<br/>or command line]
-```
+![System architecture](figures/architecture.svg)
 
 Both detectors return the same `Detection` type (`src/utils/detections.py`), and both are scored with the same
 metric code (`src/utils/metrics.py`), so their results can be compared directly. `FruitDetectionEngine`
 (`src/inference/image_processor.py`) loads both models once. If the YOLO weights are missing or broken, it
 switches to the baseline automatically and tells the user.
 
-## 5. Methods
+## 5. Methodology and algorithms
+
+The work followed the proposal's stages:
+1. Acquire and audit the data, and build a leakage-free split.
+2. Build the simple baseline and measure it on validation.
+3. Fine-tune the main detector, choosing the checkpoint on validation only.
+4. Integrate both detectors into one application.
+5. Evaluate the locked test set once, then test on unseen and modified photos.
 
 ### 5.1 OpenCV baseline (traditional computer vision)
 
@@ -194,7 +191,19 @@ The input checks reject empty, corrupt, non-image, very small (< 32 px) and very
 clear message. Phone photos are rotated upright using their EXIF data. Large photos are kept as 1600 px
 previews to save memory.
 
-## 7. Results
+## 7. Experiments and results
+
+| Experiment | Data | Section |
+|---|---|---|
+| YOLO11n accuracy | locked test split, 682 images | 7.1 |
+| Baseline vs YOLO11n, same images and metric code | test split; plain-background subset | 7.2 |
+| Speed and memory | 100 test images, a 12 MP photo, a batch of 100 | 7.3 |
+| Generalization | 12 unseen photos from Wikimedia Commons | 7.4 |
+| End-to-end system test | whole system on the team laptop | 7.5 |
+| Robustness to hard conditions | the 12 unseen photos under 11 conditions (132 cases) | 7.6 |
+| Error analysis | all 1,977 test errors | 8 |
+
+The baseline's design decisions were tested separately, on validation (Section 5.1).
 
 ### 7.1 YOLO11n on the locked test set (682 images)
 
@@ -272,6 +281,38 @@ A browser test with real uploads and downloads passed 11 of 11 steps. There are 
 
 ([System test report](../outputs/reports/system_test/SYSTEM_TEST_REPORT.md).)
 
+### 7.6 Hard conditions
+
+Each of the 12 unseen photos was modified to simulate a hard condition, then run through both detectors with
+the default settings. A case passes if the expected fruit type is detected.
+
+| Condition | YOLO11n | Baseline |
+|---|---|---|
+| Original | **11/12** | 7/12 |
+| Poor lighting (brightness ×0.35) | **10/12** | 6/12 |
+| Overexposed (×1.8) | **12/12** | 8/12 |
+| Gaussian blur (25×25) | **10/12** | 8/12 |
+| Motion blur (31 px) | 4/12 | **7/12** |
+| Rotated 30° | **11/12** | 6/12 |
+| Rotated 90° | **12/12** | 6/12 |
+| Occlusion (gray block, 16% of the image) | **9/12** | 6/12 |
+| Low resolution (128 px) | **9/12** | 8/12 |
+| JPEG quality 5 | 4/12 | **6/12** |
+| Grayscale | **8/12** | 0/12 |
+| **Total** | **100/132** | 68/132 |
+
+Results by condition:
+- YOLO11n handles lighting changes, rotation and moderate blur well.
+- It is the only method that works without color.
+- Its clear weak spots are **motion blur and heavy compression**, which remove most detections. Neither appears
+  often in the training data.
+- The baseline "passes" more of those two conditions, but usually also reports wrong fruit types.
+
+([Hard-case test log](../outputs/reports/hard_cases/HARD_CASES.md): every case, plus
+`python -m src.evaluation.hard_cases` to reproduce.)
+
+![YOLO11n under hard conditions](../outputs/reports/hard_cases/hard_cases_panel.jpg)
+
 ## 8. Error analysis
 
 Every test error was sorted into a category automatically from its position relative to the ground truth. Then
@@ -339,6 +380,7 @@ Several things did work as planned:
 - The training images were stretched to 640×640, which distorts shapes.
 - The baseline is only usable on single fruits against plain backgrounds. Its "confidence" is a rule score, not
   a probability.
+- Motion blur and heavy JPEG compression remove most detections (4 of 12 photos pass under each).
 - The speed figures are from one laptop (CPU only).
 
 ## 11. Future work
@@ -348,13 +390,35 @@ Several things did work as planned:
 2. Train at a larger image size (960 px) or with a larger model (YOLO11s/m) to find more small fruits. At 960 px,
    inference still takes only 135 ms on the laptop.
 3. Add more unaugmented photos: green and unripe fruit, single fruits on varied backgrounds, and phone photos
-   taken by the team.
+   taken by the team. Add motion-blur and compression augmentation to training.
 4. Tune the confidence threshold on the validation set for each use case (counting vs. browsing).
 5. Add video and webcam input, which was out of scope for version 1.
 
-## 12. Team and module ownership
+## 12. Conclusion
 
-As assigned in the proposal:
+BOTOTOY 2.0 is a working, tested fruit detection and identification system. Given a photo, it draws a box, fruit
+name and confidence score for every detected apple, banana, grape, orange, pineapple or watermelon, and counts
+them per class and in total. It does this in about 69 ms per image on an ordinary laptop CPU. The project
+delivered both planned methods:
+- **A traditional OpenCV pipeline.** It is explainable and fast, and works on single fruits against plain
+  backgrounds, but it fails in clutter (test mAP@0.50 0.049).
+- **A fine-tuned YOLO11n detector.** It is about 10 times as accurate (0.490), names the right fruit in 11 of 12
+  unseen photos, and keeps working in dark, overexposed, rotated and grayscale photos.
+
+The accuracy targets of the proposal (mAP@0.50 ≥ 0.80, recall ≥ 0.70 per class) were **not** met. The speed
+target was met by a wide margin.
+
+The error review explains the gap. Wrong fruit names are rare (2.3% of errors). Most errors come from crowded
+scenes that the dataset labels in two different styles, and from very small fruits. On consistently labeled
+plain-background images, the model reaches 0.750.
+
+The main lesson of the project is that **label quality limits accuracy more than model choice or training
+time**. The most valuable next step is consistent relabeling of crowded scenes, followed by a larger input size
+or model for small fruits.
+
+## 13. Contribution table
+
+Module ownership, as assigned in the proposal:
 
 | Member | Module | Main files |
 |---|---|---|
@@ -364,13 +428,13 @@ As assigned in the proposal:
 
 Shared modules: `src/utils/` (metrics, detections, image helpers) and `tests/`.
 
-## 13. Reproducibility
+## 14. Reproducibility
 
 Everything runs from a fresh clone with Python 3.12 (see the [README](../README.md)):
 
 ```bash
 python -m pip install -r requirements.txt     # pinned versions, CPU PyTorch
-streamlit run app.py                          # the app (trained weights are in the repository)
+python app.py                                 # the app (trained weights are in the repository)
 
 python -m src.data.download_dataset           # dataset (~500 MB)
 python -m src.data.dataset_validator
@@ -379,17 +443,16 @@ python -m src.data.dataset_analyzer
 
 python -m src.baseline.evaluate_baseline      # baseline on validation
 # YOLO11n training: notebooks/train_yolo_colab.ipynb on a Colab T4 GPU
-python -m src.yolo.evaluate --split test --final
-python -m src.evaluation.compare_methods --split test --final
-python -m src.evaluation.error_review --split test --final
-python -m src.evaluation.system_test
+python -m src.evaluate --split test --final  # YOLO metrics + baseline comparison + error review
+python -m src.evaluation.hard_cases           # 132 hard-condition cases
+python -m src.evaluation.system_test          # 16 end-to-end checks
 python -m pytest                              # 82 unit tests
 ```
 
 All parameters are in `config/config.yaml`. The split file lists, trained weights (SHA-256 checked) and every
 report are committed.
 
-## 14. References
+## 15. References
 
 1. L. Tyagi, *Fruit Detection* dataset, Kaggle. https://www.kaggle.com/datasets/lakshaytyagi01/fruit-detection
 2. Lightly AI, *dataset_fruits_detection* (GitHub mirror, CC0-1.0), commit `e626559`. https://github.com/lightly-ai/dataset_fruits_detection
@@ -400,10 +463,55 @@ report are committed.
 7. N. Krawetz, "Kind of Like That" (dHash perceptual hashing), 2013. https://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
 8. Wikimedia Commons, public-domain / CC0 photos used for the unseen-photo test (individual credits in `assets/unseen/CREDITS.md`).
 
-## Appendix: evidence index
+## Appendix A: Screenshots and sample outputs
+
+All screenshots are of the running application on the team laptop (CPU only), using photos the model never saw
+in training. The files are in [`docs/screenshots/`](screenshots/).
+
+**A.1 Dashboard:** model status, the six classes, test results, system information.
+
+![Dashboard](screenshots/01_dashboard.png)
+
+**A.2 Fruit Detection:** one uploaded photo. Boxes with labels and confidence scores, count per fruit,
+detection table, timing, download buttons.
+
+![Fruit Detection](screenshots/02_fruit_detection.png)
+
+**A.3 Batch Detection:** four photos processed at once, with per-image results, combined counts and downloads.
+
+![Batch Detection](screenshots/03_batch_detection.png)
+
+**A.4 YOLO11n Model page:** model card and the confidence-threshold explorer.
+
+![YOLO11n Model](screenshots/04_yolo_model.png)
+
+**A.5 OpenCV Baseline page:** the same kind of input through the traditional pipeline, with every processing
+step.
+
+![OpenCV Baseline](screenshots/05_opencv_baseline.png)
+
+**A.6 Model Evaluation page:** test results against the targets, per-class metrics, confusion matrix.
+
+![Model Evaluation](screenshots/06_model_evaluation.png)
+
+**A.7 Sample output, baseline step-by-step panel:** preprocessed image → color masks → morphology → contours →
+detections.
+
+![Baseline stages](../outputs/baseline/demo/100353af50716614_jpg.rf.73f4b2b7e5b42c369608e9f2bcf6b743_stages.jpg)
+
+**A.8 Sample outputs, YOLO11n on unseen photos:**
+
+![Unseen pineapple](../outputs/reports/system_test/unseen/single_pineapple_yolo.jpg)
+
+![Unseen grapes](../outputs/reports/system_test/unseen/green_grapes_on_vine_yolo.jpg)
+
+## Appendix B: Evidence index
 
 | Evidence | Location |
 |---|---|
+| Application screenshots | `docs/screenshots/` |
+| Hard-case test log (132 cases) | `outputs/reports/hard_cases/` |
+| Course checkpoint documents | `docs/checkpoints/` |
 | Dataset audit, split manifests, 24-sample contact sheet | `outputs/reports/dataset/`, `data/splits/` |
 | Baseline report, ablation, step-by-step demo panels | `outputs/baseline/` |
 | Training configuration, curves, Ultralytics plots | `outputs/yolo/training/` |

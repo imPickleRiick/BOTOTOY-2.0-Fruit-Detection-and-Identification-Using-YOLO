@@ -36,6 +36,8 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 | [Error review](outputs/yolo/eval_test/error_review/ERROR_REVIEW.md) | Every false positive and missed fruit on the test set, sorted by cause; 48 inspected by eye |
 | [Presentation and demo guide](docs/DEMO_GUIDE.md) | Presentation outline, live demo script, backup plan |
 | [Defense guide](docs/DEFENSE_GUIDE.md) | Each member's module, how to show it, likely questions |
+| Course checkpoints: [1 Proposal](docs/checkpoints/PHASE1_PROPOSAL_AND_PLAN.md) · [2 50%](docs/checkpoints/PHASE2_50_PERCENT_PROGRESS.md) · [3 Core](docs/checkpoints/PHASE3_CORE_IMPLEMENTATION_AND_TESTING.md) · [4 80%](docs/checkpoints/PHASE4_80_PERCENT_PROGRESS.md) · [5 Final](docs/checkpoints/PHASE5_FINAL_PRESENTATION.md) | Each checkpoint's hand-in list mapped to the evidence in this repository |
+| [Hard-case test log](outputs/reports/hard_cases/HARD_CASES.md) | 132 cases: lighting, blur, angle, occlusion, low quality, grayscale |
 | [Dataset audit](outputs/reports/dataset/DATASET_AUDIT.md) · [Baseline report](outputs/baseline/BASELINE_REPORT.md) · [Training report](outputs/yolo/training/TRAINING_REPORT.md) · [Test evaluation](outputs/yolo/eval_test/EVALUATION.md) · [Comparison](outputs/comparisons/test/COMPARISON.md) · [System test](outputs/reports/system_test/SYSTEM_TEST_REPORT.md) | Detailed phase reports |
 
 ---
@@ -114,6 +116,38 @@ Batch processing also works from the command line:
 ```bash
 python -m src.inference.batch_processor path/to/folder --method yolo --out outputs/app/my_batch
 ```
+
+## Model weights
+
+The trained YOLO11n model is **already in the repository**: [`models/trained/bototoy_yolo11n.pt`](models/trained/bototoy_yolo11n.pt)
+(5.5 MB, SHA-256 `6ce70859560111e7…`, checked at load time against the training run). Nothing has to be
+downloaded to run the app. To retrain it, see [YOLO11n](#yolo11n-main-method) below. The COCO-pretrained
+starting point `yolo11n.pt` is downloaded automatically by Ultralytics during training.
+
+## Sample inputs
+
+| Folder | Contents |
+|---|---|
+| [`assets/samples/`](assets/samples/) | 8 photos from the dataset's test split (CC0), also selectable as "Demo image" in the app |
+| [`assets/unseen/`](assets/unseen/) | 12 public-domain photos from Wikimedia Commons, never seen in training ([credits](assets/unseen/CREDITS.md), expected fruit types in `expected.csv`) |
+
+Example: `python -m src.yolo.detector assets/unseen/mandarins_on_plate.jpg --out outputs/app/demo` writes the
+annotated image and a JSON file with every box, class and confidence.
+
+Screenshots of every app page: [`docs/screenshots/`](docs/screenshots/).
+
+## Reproduce the reported results
+
+| Reported result | Command | Output |
+|---|---|---|
+| Test metrics, baseline vs YOLO11n, error review | `python -m src.evaluate --split test --final` | `outputs/yolo/eval_test/`, `outputs/comparisons/test/` |
+| Hard-condition tests (132 cases) | `python -m src.evaluation.hard_cases` | `outputs/reports/hard_cases/` |
+| End-to-end system test, speed, unseen photos | `python -m src.evaluation.system_test` | `outputs/reports/system_test/` |
+| Baseline results and improvement log (validation) | `python -m src.baseline.evaluate_baseline`, `python -m src.baseline.ablation` | `outputs/baseline/` |
+| Dataset statistics and audit | `python -m src.data.dataset_analyzer` | `outputs/reports/dataset/` |
+| Unit tests | `python -m pytest` | 82 tests |
+
+The evaluations need the dataset (next section). The app, the hard-case test and the unit tests do not.
 
 ## Dataset preparation
 

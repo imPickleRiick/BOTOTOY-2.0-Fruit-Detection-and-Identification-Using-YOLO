@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a5a52"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #4a5a52; stroke-width: 1.5; rx: 8; }
+      .main { fill: #e6f2ea; stroke: #1f5e3b; stroke-width: 2; }
+      .base { fill: #fdf3e2; stroke: #c07a12; stroke-width: 1.5; }
+      .t { font-size: 14px; font-weight: 600; fill: #1a1a1a; text-anchor: middle; }
+      .s { font-size: 11.5px; fill: #444; text-anchor: middle; }
+      .l { font-size: 11px; fill: #4a5a52; text-anchor: middle; font-style: italic; }
+      .arrow { stroke: #4a5a52; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    </style>
+  </defs>
+  <rect width="960" height="300" fill="#ffffff"/>
+
+  <rect class="box" x="10" y="115" width="130" height="70" rx="8"/>
+  <text class="t" x="75" y="143">Photo</text>
+  <text class="s" x="75" y="162">JPG / PNG / BMP / WEBP</text>
+  <text class="s" x="75" y="177">one or a batch</text>
+
+  <rect class="box" x="170" y="115" width="145" height="70" rx="8"/>
+  <text class="t" x="242" y="143">Decode + checks</text>
+  <text class="s" x="242" y="162">EXIF rotation, format,</text>
+  <text class="s" x="242" y="177">size limits</text>
+
+  <rect class="main" x="355" y="40" width="190" height="80" rx="8"/>
+  <text class="t" x="450" y="68">YOLO11n (main)</text>
+  <text class="s" x="450" y="88">fine-tuned CNN detector</text>
+  <text class="s" x="450" y="104">resize 640 → predict → NMS</text>
+
+  <rect class="base" x="355" y="180" width="190" height="80" rx="8"/>
+  <text class="t" x="450" y="208">OpenCV baseline</text>
+  <text class="s" x="450" y="228">HSV masks → morphology →</text>
+  <text class="s" x="450" y="244">contours → features → rules</text>
+
+  <rect class="box" x="585" y="115" width="150" height="70" rx="8"/>
+  <text class="t" x="660" y="143">Detections</text>
+  <text class="s" x="660" y="162">box, fruit class, score</text>
+  <text class="s" x="660" y="177">count per class + total</text>
+
+  <rect class="box" x="775" y="115" width="175" height="70" rx="8"/>
+  <text class="t" x="862" y="143">Output</text>
+  <text class="s" x="862" y="162">Streamlit app / command line</text>
+  <text class="s" x="862" y="177">annotated JPG, JSON, CSV, ZIP</text>
+
+  <path class="arrow" d="M140,150 L168,150"/>
+  <path class="arrow" d="M315,140 C335,140 335,80 353,80"/>
+  <path class="arrow" d="M315,160 C335,160 335,220 353,220"/>
+  <path class="arrow" d="M545,80 C565,80 565,140 583,140"/>
+  <path class="arrow" d="M545,220 C565,220 565,160 583,160"/>
+  <path class="arrow" d="M735,150 L773,150"/>
+
+  <text class="l" x="450" y="28">default</text>
+  <text class="l" x="450" y="282">fallback if YOLO weights are missing · comparison</text>
+</svg>
