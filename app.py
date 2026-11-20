@@ -2,8 +2,21 @@
 
 Run from the project root, with the virtual environment activated:
     streamlit run app.py
+or simply:
+    python app.py          (also the VS Code "Run" button)
 """
 import streamlit as st
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+if __name__ == "__main__" and get_script_run_ctx(suppress_warning=True) is None:
+    # Started with plain `python app.py`: relaunch through Streamlit, which serves the app in the browser.
+    import sys
+    from pathlib import Path
+
+    from streamlit.web import cli
+
+    sys.argv = ["streamlit", "run", str(Path(__file__).resolve()), *sys.argv[1:]]
+    sys.exit(cli.main())
 
 from src.app.common import PAGES, get_engine, render_sidebar
 from src.app.pages import about, baseline, batch, dashboard, detection, evaluation, yolo

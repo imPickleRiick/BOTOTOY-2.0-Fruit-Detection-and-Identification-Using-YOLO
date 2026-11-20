@@ -87,9 +87,10 @@ python -m pip install -r requirements.txt
 
 ```bash
 streamlit run app.py
+# or simply:  python app.py   (also works with the VS Code "Run" button)
 ```
 
-Your browser opens at http://localhost:8501. The trained model is already in the repository, so
+Your browser opens at http://localhost:8501. Stop the app with Ctrl+C in the terminal. The trained model is already in the repository, so
 detection works immediately; the dataset is only needed for training and evaluation. Pages:
 
 | Page | What it does |
