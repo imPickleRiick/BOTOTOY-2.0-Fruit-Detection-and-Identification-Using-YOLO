@@ -33,6 +33,7 @@ models/**/*.pt
 !models/trained/*.pt
 
 # --- Secrets ---
+.streamlit/certs/
 .env
 kaggle.json
 

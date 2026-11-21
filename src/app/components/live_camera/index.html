@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  Live camera component for the BOTOTOY Fruit Reader (Streamlit custom component, no build step).
+  - Shows the camera (rear camera on phones) and sends one frame (JPEG, longest side <= 640 px) to the
+    app at a time; the next frame is sent only after the answer arrives, so slow networks never pile up.
+  - Draws the boxes the app returns on top of the video and speaks the app's announcements.
+  Protocol: the same postMessage messages as streamlit-component-lib (componentReady, render,
+  setComponentValue, setFrameHeight).
+-->
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; font-family: "Source Sans Pro", "Segoe UI", Arial, sans-serif; background: transparent; }
+  .wrap { position: relative; width: 100%; max-width: 720px; margin: 0 auto; background: #111; border-radius: 12px;
+          overflow: hidden; aspect-ratio: 4 / 3; }
+  video, canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .controls { display: flex; gap: 10px; margin: 10px auto 0; max-width: 720px; flex-wrap: wrap; }
+  button { flex: 1 1 200px; font-size: 22px; font-weight: 650; padding: 16px 18px; border-radius: 12px; cursor: pointer;
+           border: 2px solid #0b5d2a; background: #0b5d2a; color: #fff; }
+  button.secondary { background: transparent; color: inherit; border-color: currentColor; }
+  button:focus-visible { outline: 4px solid #f2b400; outline-offset: 2px; }
+  #status { max-width: 720px; margin: 8px auto 0; font-size: 18px; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap" hidden>
+  <video id="video" playsinline muted autoplay></video>
+  <canvas id="overlay"></canvas>
+</div>
+<div class="controls">
+  <button id="start" aria-label="Start the live fruit reader">▶ Start live reader</button>
+  <button id="stop" class="secondary" hidden aria-label="Stop the live fruit reader">■ Stop</button>
+  <button id="repeat" class="secondary" hidden aria-label="Say the last result again">🔊 Say it again</button>
+</div>
+<div id="status" role="status" aria-live="polite">Tap Start, then point the camera at the fruit and hold still.</div>
+<canvas id="grab" hidden></canvas>
+
+<script>
+const send = (type, data) => window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type }, data), "*");
+const setValue = (value) => send("streamlit:setComponentValue", { value, dataType: "json" });
+const setHeight = () => send("streamlit:setFrameHeight", { height: document.documentElement.scrollHeight + 4 });
+
+const video = document.getElementById("video"), overlay = document.getElementById("overlay");
+const grab = document.getElementById("grab"), wrap = document.getElementById("wrap");
+const startBtn = document.getElementById("start"), stopBtn = document.getElementById("stop");
+const repeatBtn = document.getElementById("repeat"), statusEl = document.getElementById("status");
+
+let args = { interval_ms: 700, max_side: 640, rate: 0.95, result: null };
+let stream = null, running = false, seq = 0, waitingFor = 0, sentAt = 0, lastSpokenSeq = -1, lastSaid = "";
+let timer = null;
+
+function speak(text) {
+  if (!text || !("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US"; u.rate = args.rate || 0.95;
+  window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+}
+
+function drawBoxes(result) {
+  const w = video.videoWidth, h = video.videoHeight;
+  const rect = overlay.getBoundingClientRect();
+  overlay.width = rect.width; overlay.height = rect.height;
+  const ctx = overlay.getContext("2d");
+  ctx.clearRect(0, 0, overlay.width, overlay.height);
+  if (!result || !w || !h || !result.boxes) return;
+  // object-fit: contain -> the video is letterboxed inside the element
+  const s = Math.min(overlay.width / w, overlay.height / h);
+  const ox = (overlay.width - w * s) / 2, oy = (overlay.height - h * s) / 2;
+  const k = w / result.w;   // frame was scaled down before sending
+  ctx.lineWidth = 4; ctx.font = "bold 18px sans-serif";
+  for (const [x1, y1, x2, y2, label, color] of result.boxes) {
+    const X = ox + x1 * k * s, Y = oy + y1 * k * s, W = (x2 - x1) * k * s, H = (y2 - y1) * k * s;
+    ctx.strokeStyle = color; ctx.strokeRect(X, Y, W, H);
+    const tw = ctx.measureText(label).width + 10;
+    ctx.fillStyle = color; ctx.fillRect(X, Math.max(0, Y - 26), tw, 26);
+    ctx.fillStyle = "#fff"; ctx.fillText(label, X + 5, Math.max(19, Y - 7));
+  }
+}
+
+function sendFrame() {
+  if (!running) return;
+  const now = Date.now();
+  if (waitingFor && now - sentAt < 6000) { timer = setTimeout(sendFrame, 150); return; }  // wait for the answer
+  const w = video.videoWidth, h = video.videoHeight;
+  if (w && h) {
+    const s = Math.min(1, (args.max_side || 640) / Math.max(w, h));
+    grab.width = Math.round(w * s); grab.height = Math.round(h * s);
+    grab.getContext("2d").drawImage(video, 0, 0, grab.width, grab.height);
+    seq += 1; waitingFor = seq; sentAt = now;
+    setValue({ seq, frame: grab.toDataURL("image/jpeg", 0.72) });
+  }
+  timer = setTimeout(sendFrame, args.interval_ms || 700);
+}
+
+function cameraProblem(e) {
+  // A clear reason + what to do, for each way the camera can fail.
+  const name = e && e.name ? e.name : "";
+  let address = "";
+  try { address = window.parent.location.protocol + "//" + window.parent.location.host; } catch (_) {}
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)
+    return ["The camera is blocked because this page is not secure (" + (address || "http") + "). Open the " +
+            "https address from the QR code (start the app with python app.py --https).",
+            "The camera needs the secure https address."];
+  if (name === "NotAllowedError" || name === "SecurityError")
+    return ["Camera permission is blocked. Tap the icon left of the address bar → Permissions (or Site settings) → " +
+            "Camera → Allow, then reload the page. On iPhone: Settings → Safari → Camera → Allow.",
+            "Camera permission is blocked. Please allow the camera in the browser settings and reload."];
+  if (name === "NotReadableError" || name === "AbortError" || name === "TrackStartError")
+    return ["The camera is busy. Close other apps or browser tabs that use the camera, then tap Start again.",
+            "The camera is busy. Close other camera apps, then try again."];
+  if (name === "NotFoundError" || name === "DevicesNotFoundError")
+    return ["No camera was found on this device.", "No camera was found."];
+  return ["Cannot open the camera (" + (name || "error") + ": " + (e && e.message ? e.message : e) + ").",
+          "I cannot open the camera."];
+}
+
+async function openCamera() {
+  // Prefer the back camera; if that request fails for a reason other than permission, try any camera.
+  try {
+    return await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" },
+                                                               width: { ideal: 1280 }, height: { ideal: 960 } },
+                                                       audio: false });
+  } catch (e) {
+    if (e && (e.name === "NotAllowedError" || e.name === "SecurityError")) throw e;
+    return await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+  }
+}
+
+async function start() {
+  try {
+    if (!window.isSecureContext || !navigator.mediaDevices) throw new Error("insecure");
+    stream = await openCamera();
+  } catch (e) {
+    const [text, spoken] = cameraProblem(e);
+    statusEl.textContent = text; statusEl.style.color = "#b3261e";
+    speak(spoken); setHeight(); return;
+  }
+  statusEl.style.color = "";
+  wrap.hidden = false; running = true;
+  startBtn.hidden = true; stopBtn.hidden = false; repeatBtn.hidden = false;
+  statusEl.textContent = "Live. Point the camera at the fruit and hold still for 2 to 3 seconds.";
+  speak("Live reader started. Point the camera at the fruit and hold still.");  // also unlocks speech on phones
+  let begun = false;
+  const begin = () => { if (!begun && running) { begun = true; setHeight(); sendFrame(); } };
+  video.onloadedmetadata = begin;            // set BEFORE attaching the stream so the event is never missed
+  video.srcObject = stream;
+  try { await video.play(); } catch (e) { /* muted video may autoplay anyway */ }
+  if (video.readyState >= 1) begin();        // metadata already available
+  setHeight();
+}
+
+function stop() {
+  running = false; clearTimeout(timer); waitingFor = 0;
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; video.srcObject = null; wrap.hidden = true;
+  startBtn.hidden = false; stopBtn.hidden = true; repeatBtn.hidden = true;
+  statusEl.textContent = "Stopped. Tap Start to read again.";
+  setValue(null); setHeight();
+}
+
+startBtn.addEventListener("click", start);
+stopBtn.addEventListener("click", stop);
+repeatBtn.addEventListener("click", () => speak(lastSaid || "Nothing has been said yet."));
+
+window.addEventListener("message", (event) => {
+  if (!event.data || event.data.type !== "streamlit:render") return;
+  args = Object.assign(args, event.data.args || {});
+  const r = args.result;
+  if (r && r.seq >= waitingFor) waitingFor = 0;          // answer arrived: the next frame may go
+  if (running && r) {
+    drawBoxes(r);
+    if (r.status) statusEl.textContent = r.status;
+    if (r.say && r.seq !== lastSpokenSeq) { lastSpokenSeq = r.seq; lastSaid = r.say; speak(r.say); }
+  }
+  setHeight();
+});
+window.addEventListener("resize", () => { if (running) drawBoxes(args.result); setHeight(); });
+
+send("streamlit:componentReady", { apiVersion: 1 });
+setHeight();
+</script>
+</body>
+</html>

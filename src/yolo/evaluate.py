@@ -23,7 +23,7 @@ from pathlib import Path
 import numpy as np
 
 from src.baseline.evaluate_baseline import load_ground_truth
-from src.utils.detections import Detection, draw_detections
+from src.utils.detections import Detection, class_color, draw_detections
 from src.utils.helpers import ensure_dir, list_images, load_config, resolve_path, save_json, system_info
 from src.utils.image_utils import draw_box, read_image, write_image
 from src.utils.metrics import ImageEval, count_errors, evaluate, localization_recall, match_predictions
@@ -79,8 +79,7 @@ def draw_errors(image, ev: ImageEval, classes: list[str]) -> np.ndarray:
                     matched_gt.add(cand[0])
     for k, (c, s, b) in enumerate(zip(ev.pred_classes, ev.pred_scores, ev.pred_boxes)):
         if tp[k]:
-            from src.utils.image_utils import CLASS_COLORS_BGR
-            draw_box(out, tuple(b), f"TP {classes[c]} {s:.2f}", CLASS_COLORS_BGR[classes[c]], 2)
+            draw_box(out, tuple(b), f"TP {classes[c]} {s:.2f}", class_color(classes[c]), 2)
         else:
             draw_box(out, tuple(b), f"FP {classes[c]} {s:.2f}", (0, 0, 255), 2)
     for g, (c, b) in enumerate(zip(ev.gt_classes, ev.gt_boxes)):

@@ -25,9 +25,9 @@ def lan_address() -> str | None:
     return None if ip.startswith("127.") else ip
 
 
-def phone_url(port: int) -> str | None:
+def phone_url(port: int, https: bool = False) -> str | None:
     ip = lan_address()
-    return f"http://{ip}:{port}" if ip else None
+    return f"{'https' if https else 'http'}://{ip}:{port}" if ip else None
 
 
 def qr_image(text: str, size: int = 300) -> np.ndarray:

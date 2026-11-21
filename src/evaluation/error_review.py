@@ -47,7 +47,8 @@ import numpy as np
 
 from src.baseline.evaluate_baseline import load_ground_truth
 from src.utils.helpers import ensure_dir, list_images, load_config, resolve_path, save_json
-from src.utils.image_utils import CLASS_COLORS_BGR, draw_box, read_image, write_image
+from src.utils.detections import class_color
+from src.utils.image_utils import draw_box, read_image, write_image
 from src.utils.metrics import ImageEval, iou_matrix, match_predictions
 
 FP_CATEGORIES = ["wrong_class", "group_box", "inside_group_label", "duplicate", "poor_box", "background"]
@@ -160,7 +161,7 @@ def crop_with_context(image: np.ndarray, ev: ImageEval, box: np.ndarray, classes
     for c, b in zip(ev.gt_classes, ev.gt_boxes):  # ground truth: thin white
         cv2.rectangle(out, tuple(map(int, b[:2])), tuple(map(int, b[2:])), (255, 255, 255), 1)
     for c, b in zip(ev.pred_classes, ev.pred_boxes):  # predictions: thin class color
-        cv2.rectangle(out, tuple(map(int, b[:2])), tuple(map(int, b[2:])), CLASS_COLORS_BGR[classes[c]], 1)
+        cv2.rectangle(out, tuple(map(int, b[:2])), tuple(map(int, b[2:])), class_color(classes[c]), 1)
     draw_box(out, tuple(box), "", highlight, 3)
     cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
     half = max(box[2] - box[0], box[3] - box[1], 80)

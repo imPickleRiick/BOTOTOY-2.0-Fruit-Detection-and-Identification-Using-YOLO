@@ -91,6 +91,7 @@ python -m pip install -r requirements.txt
 ```bash
 streamlit run app.py
 # or simply:  python app.py   (also works with the VS Code "Run" button)
+# phone live camera on the same Wi-Fi:  python app.py --https   (then scan the QR code on the Fruit Reader page)
 ```
 
 Your browser opens at http://localhost:8501. Stop the app with Ctrl+C in the terminal. The trained model is already in the repository, so

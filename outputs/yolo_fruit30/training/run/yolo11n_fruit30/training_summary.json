@@ -1,0 +1,49 @@
+{
+  "run_dir": "yolo11n_fruit30",
+  "resumed_from": "last.pt",
+  "settings": {
+    "imgsz": 640,
+    "epochs": 50,
+    "batch": 16,
+    "patience": 10,
+    "optimizer": "SGD",
+    "lr0": 0.01,
+    "momentum": 0.937,
+    "seed": 42,
+    "deterministic": true,
+    "freeze": null,
+    "workers": 2,
+    "cache": false,
+    "device": "0",
+    "fraction": 1.0,
+    "pretrained": "yolo11n.pt"
+  },
+  "training_duration_minutes": 56.2,
+  "system": {
+    "os": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "python": "3.13.16",
+    "cpu": "Intel(R) Xeon(R) CPU @ 2.00GHz",
+    "cpu_threads": 2,
+    "ram_gb": 12.7,
+    "torch": "2.14.1+cu130",
+    "ultralytics": "8.4.215",
+    "cuda_available": true,
+    "gpu": "Tesla T4",
+    "gpu_memory_gb": 14.6,
+    "cuda": "13.0"
+  },
+  "best_weights": {
+    "file": "weights/best.pt",
+    "size_mb": 5.49,
+    "sha256": "cc078f9fc13c4506dbb2587effded3688f64b38d7f0381262e1209becd79d3e9"
+  },
+  "validation": {
+    "epochs_completed": 50,
+    "best_epoch": 50,
+    "best_val_precision": 0.8478,
+    "best_val_recall": 0.839,
+    "best_val_mAP50": 0.8913,
+    "best_val_mAP50-95": 0.7099,
+    "logged_training_minutes": 55.4
+  }
+}

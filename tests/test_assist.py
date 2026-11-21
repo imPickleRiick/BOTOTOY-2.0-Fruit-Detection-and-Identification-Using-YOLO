@@ -88,3 +88,72 @@ def test_phone_qr_code_decodes_to_the_url():
     assert text == url
     found = phone_url(8501)
     assert found is None or (found.startswith("http://") and found.endswith(":8501"))
+
+
+def test_https_proxy_forwards_to_the_app(tmp_path):
+    """A request over TLS to the proxy reaches a plain-http server unchanged."""
+    import http.server
+    import socket
+    import ssl
+    import subprocess
+    import threading
+    import urllib.request
+
+    from src.assist.https_cert import find_openssl
+    from src.assist.https_proxy import start_https_proxy
+
+    openssl = find_openssl()
+    if openssl is None:
+        pytest.skip("OpenSSL not available")
+    cert, key = tmp_path / "cert.pem", tmp_path / "key.pem"
+    subprocess.run([openssl, "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1", "-keyout", str(key),
+                    "-out", str(cert), "-subj", "/CN=test", "-addext", "subjectAltName=IP:127.0.0.1"],
+                   check=True, capture_output=True, timeout=60)
+
+    class Hello(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"hello " + self.path.encode())
+
+        def log_message(self, *args):
+            pass
+
+    app = http.server.HTTPServer(("127.0.0.1", 0), Hello)
+    threading.Thread(target=app.serve_forever, daemon=True).start()
+    with socket.socket() as s:  # a free port for the proxy
+        s.bind(("127.0.0.1", 0))
+        proxy_port = s.getsockname()[1]
+    proxy = start_https_proxy(cert, key, proxy_port, app.server_address[1], listen_host="127.0.0.1")
+    try:
+        ctx = ssl.create_default_context(cafile=str(cert))
+        body = urllib.request.urlopen(f"https://127.0.0.1:{proxy_port}/fruit", context=ctx, timeout=10).read()
+        assert body == b"hello /fruit"
+    finally:
+        proxy.shutdown()
+        app.shutdown()
+
+
+def test_live_announcer_waits_for_a_stable_scene_and_does_not_repeat():
+    from src.assist.live import LiveAnnouncer
+    a = LiveAnnouncer()
+    say = lambda types, t, **kw: a.update(set(types), "I see a mango.", now=t, **kw)
+    assert say(["mango"], 0) == "" and say(["mango"], 1) == ""
+    assert say(["mango"], 2) == "I see a mango."           # 3rd stable frame
+    assert say(["mango"], 3) == "" and say(["mango"], 10) == ""   # no repeat
+    assert say(["mango"], 18) == "I see a mango."          # still pointing after 15 s
+    assert say(["mango", "banana"], 19) == ""              # scene changed: wait again
+    assert say(["mango", "banana"], 20) == ""
+    assert say(["mango", "banana"], 21) == "I see a mango."
+
+
+def test_live_announcer_resets_after_empty_frames_and_reports_photo_problems():
+    from src.assist.live import LiveAnnouncer
+    a = LiveAnnouncer()
+    for t in range(3):
+        a.update({"guava"}, "guava", now=t)
+    for t in range(3, 6):
+        assert a.update(set(), "", "dark", "Too dark.", now=t) == ("Too dark." if t == 5 else "")
+    for t in range(6, 8):
+        assert a.update({"guava"}, "guava", now=t) == ""
+    assert a.update({"guava"}, "guava", now=8) == "guava"  # announced again after the scene was cleared
