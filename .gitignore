@@ -20,6 +20,8 @@ Thumbs.db
 data/raw/
 data/processed/
 data/data.yaml
+data/processed_fruit30/
+data/fruit30.yaml
 *.cache
 
 # --- YOLO / training artifacts ---

@@ -32,6 +32,7 @@ bounding box, the fruit class, a confidence score, and counts per class plus an 
 
 | Document | For |
 |---|---|
+| [How it works](docs/HOW_IT_WORKS.md) ([PDF](docs/HOW_IT_WORKS.pdf)) | Plain-language explanation of the system and its computer vision: pixels, HSV, morphology, contours, CNNs, YOLO, NMS, training, metrics |
 | [Final project report](docs/FINAL_REPORT.md) | The whole project in one place: objectives vs results, data, methods, results, error analysis, limitations |
 | [Error review](outputs/yolo/eval_test/error_review/ERROR_REVIEW.md) | Every false positive and missed fruit on the test set, sorted by cause; 48 inspected by eye |
 | [Presentation and demo guide](docs/DEMO_GUIDE.md) | Presentation outline, live demo script, backup plan |

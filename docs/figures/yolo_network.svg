@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 330" width="980" height="330" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a5a52"/>
+    </marker>
+    <style>
+      .t { font-size: 14px; font-weight: 600; fill: #1a1a1a; text-anchor: middle; }
+      .s { font-size: 11.5px; fill: #444; text-anchor: middle; }
+      .h { font-size: 12.5px; font-weight: 700; fill: #1f5e3b; text-anchor: middle; letter-spacing: 0.5px; }
+      .arrow { stroke: #4a5a52; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    </style>
+  </defs>
+  <rect width="980" height="330" fill="#ffffff"/>
+
+  <!-- input -->
+  <rect x="10" y="115" width="105" height="105" fill="#fdf3e2" stroke="#c07a12" stroke-width="1.5" rx="6"/>
+  <text class="t" x="62" y="160">Photo</text>
+  <text class="s" x="62" y="178">640 × 640 × 3</text>
+  <text class="s" x="62" y="194">(R, G, B values)</text>
+
+  <!-- backbone -->
+  <text class="h" x="265" y="28">BACKBONE: what is in the image?</text>
+  <rect x="150" y="70" width="60" height="190" fill="#e6f2ea" stroke="#1f5e3b" rx="4"/>
+  <rect x="222" y="95" width="50" height="140" fill="#cfe6d7" stroke="#1f5e3b" rx="4"/>
+  <rect x="284" y="115" width="42" height="100" fill="#b5d8c1" stroke="#1f5e3b" rx="4"/>
+  <rect x="338" y="135" width="34" height="60" fill="#98caa9" stroke="#1f5e3b" rx="4"/>
+  <text class="s" x="180" y="280">320²</text>
+  <text class="s" x="247" y="280">80²</text>
+  <text class="s" x="305" y="280">40²</text>
+  <text class="s" x="355" y="280">20²</text>
+  <text class="s" x="265" y="302">convolution layers: edges → textures → fruit parts</text>
+  <text class="s" x="265" y="318">(image gets smaller, information gets richer)</text>
+
+  <!-- neck -->
+  <text class="h" x="510" y="28">NECK: combine scales</text>
+  <rect x="440" y="70" width="140" height="190" fill="#eef1f8" stroke="#3b5ba5" rx="6"/>
+  <text class="t" x="510" y="140">Feature</text>
+  <text class="t" x="510" y="158">pyramid</text>
+  <text class="s" x="510" y="182">mixes fine detail</text>
+  <text class="s" x="510" y="198">with big-picture</text>
+  <text class="s" x="510" y="214">context</text>
+
+  <!-- head -->
+  <text class="h" x="700" y="28">HEAD: predict boxes</text>
+  <rect x="625" y="60" width="150" height="58" fill="#ffffff" stroke="#4a5a52" rx="6"/>
+  <text class="t" x="700" y="84">80 × 80 grid</text>
+  <text class="s" x="700" y="102">small fruits</text>
+  <rect x="625" y="138" width="150" height="58" fill="#ffffff" stroke="#4a5a52" rx="6"/>
+  <text class="t" x="700" y="162">40 × 40 grid</text>
+  <text class="s" x="700" y="180">medium fruits</text>
+  <rect x="625" y="216" width="150" height="58" fill="#ffffff" stroke="#4a5a52" rx="6"/>
+  <text class="t" x="700" y="240">20 × 20 grid</text>
+  <text class="s" x="700" y="258">large fruits</text>
+  <text class="s" x="700" y="300">each cell: box (4 numbers)</text>
+  <text class="s" x="700" y="316">+ score for each of 6 fruits</text>
+
+  <!-- output -->
+  <rect x="815" y="95" width="155" height="70" fill="#ffffff" stroke="#4a5a52" rx="6"/>
+  <text class="t" x="892" y="122">8,400 candidates</text>
+  <text class="s" x="892" y="142">6,400 + 1,600 + 400</text>
+  <rect x="815" y="190" width="155" height="70" fill="#e6f2ea" stroke="#1f5e3b" stroke-width="2" rx="6"/>
+  <text class="t" x="892" y="217">Final fruits</text>
+  <text class="s" x="892" y="237">confidence ≥ 0.25 + NMS</text>
+
+  <path class="arrow" d="M115,167 L148,167"/>
+  <path class="arrow" d="M372,165 L438,165"/>
+  <path class="arrow" d="M580,120 L623,89"/>
+  <path class="arrow" d="M580,165 L623,167"/>
+  <path class="arrow" d="M580,210 L623,245"/>
+  <path class="arrow" d="M775,89 L813,120"/>
+  <path class="arrow" d="M775,167 L813,140"/>
+  <path class="arrow" d="M775,245 L813,150"/>
+  <path class="arrow" d="M892,165 L892,188"/>
+</svg>
