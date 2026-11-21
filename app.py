@@ -54,20 +54,26 @@ engine = get_engine()
 
 reader_page = st.Page(reader.render, title="Fruit Reader", icon=":material/record_voice_over:", url_path="reader",
                       default=True)
+v1_pages = [  # the original 6-fruit detector (tag v1.0), kept for comparison and as evidence
+    st.Page(detection.render, title="Fruit Detection", icon=":material/image_search:", url_path="detect"),
+    st.Page(batch.render, title="Batch Detection", icon=":material/photo_library:", url_path="batch"),
+    st.Page(yolo.render, title="YOLO11n Model", icon=":material/neurology:", url_path="yolo"),
+    st.Page(baseline.render, title="OpenCV Baseline", icon=":material/tune:", url_path="baseline"),
+    st.Page(evaluation.render, title="Model Evaluation", icon=":material/monitoring:", url_path="evaluation"),
+]
 pages = {
     "Reader": [reader_page],
     "Project": [
         st.Page(dashboard.render, title="Dashboard", icon=":material/dashboard:", url_path="dashboard"),
-        st.Page(detection.render, title="Fruit Detection", icon=":material/image_search:", url_path="detect"),
-        st.Page(batch.render, title="Batch Detection", icon=":material/photo_library:", url_path="batch"),
-        st.Page(yolo.render, title="YOLO11n Model", icon=":material/neurology:", url_path="yolo"),
-        st.Page(baseline.render, title="OpenCV Baseline", icon=":material/tune:", url_path="baseline"),
-        st.Page(evaluation.render, title="Model Evaluation", icon=":material/monitoring:", url_path="evaluation"),
         st.Page(about.render, title="About", icon=":material/info:", url_path="about"),
     ],
+    "Version 1 (6 fruits)": v1_pages,
 }
 PAGES.update({p.url_path: p for group in pages.values() for p in group})
 page = st.navigation(pages)
-if page is not reader_page:  # the reader has its own settings; keep its sidebar empty
+if page in v1_pages:  # the v1 detection settings only apply to the v1 pages
     render_sidebar(engine)
+    st.info("**Version 1**: the original 6-fruit detector (apple, banana, grape, orange, pineapple, watermelon), "
+            "kept for comparison. The Fruit Reader uses the new 31-fruit model; see the Dashboard.",
+            icon=":material/history:")
 page.run()
