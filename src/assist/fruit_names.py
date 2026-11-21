@@ -14,6 +14,9 @@ FRUIT_NAMES: dict[str, tuple[str, str, str | None]] = {
     "Orange": ("orange", "oranges", "dalandan"),
     "Pineapple": ("pineapple", "pineapples", "pinya"),
     "Watermelon": ("watermelon", "watermelons", "pakwan"),
+    # combined 31-class model: apple and grape come from v1 (lower-case names)
+    "apple": ("apple", "apples", "mansanas"),
+    "grape": ("grape bunch", "grape bunches", "ubas"),
     # v2 (30 classes, Roboflow "Fruit" by trucly)
     "ambarella_fruit": ("ambarella", "ambarellas", None),
     "avocado": ("avocado", "avocados", "abokado"),

@@ -44,7 +44,7 @@ def test_no_filipino_option_and_nothing_found():
     assert full_message([], W, "The photo is too dark.").startswith("The photo is too dark.")
 
 
-@pytest.mark.parametrize("config", ["config/config.yaml", "config/config_fruit30.yaml"])
+@pytest.mark.parametrize("config", ["config/config.yaml", "config/config_fruit30.yaml", "config/config_fruit31.yaml"])
 def test_every_class_has_a_spoken_name(config):
     for cls in load_config(config)["classes"]:
         assert cls in FRUIT_NAMES, cls

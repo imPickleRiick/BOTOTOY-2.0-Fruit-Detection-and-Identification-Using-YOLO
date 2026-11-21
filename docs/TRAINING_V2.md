@@ -1,6 +1,6 @@
-# Training the 30-fruit model (v2) on Google Colab
+# Training the combined 31-fruit model (v2) on Google Colab
 
-Time needed: about 10 minutes of setup + 1.5–2 hours of training. Use a laptop or PC browser (not a phone).
+Time needed: about 10 minutes of setup + about 2 hours of training. Use a laptop or PC browser (not a phone).
 
 ## 1. Put the dataset on Google Drive (once)
 
@@ -15,7 +15,7 @@ The notebook expects exactly: `My Drive/BOTOTOY_2.0/Fruit.v1i.yolov8.zip`.
 
 Open this link (same Google account):
 
-**https://colab.research.google.com/github/imPickleRiick/BOTOTOY-2.0-Fruit-Detection-and-Identification-Using-YOLO/blob/v2-assistive/notebooks/train_fruit30_colab.ipynb**
+**https://colab.research.google.com/github/imPickleRiick/BOTOTOY-2.0-Fruit-Detection-and-Identification-Using-YOLO/blob/v2-assistive/notebooks/train_fruit31_colab.ipynb**
 
 ## 3. Turn on the GPU
 
@@ -30,10 +30,10 @@ Click into the first code cell and press **Shift + Enter** for each cell, waitin
 | 1. Check the GPU | Confirms the T4 is active | `GPU: Tesla T4` |
 | 2. Connect Google Drive | Asks for Drive access: choose your account and **Allow** | `Runs will be saved in: /content/drive/MyDrive/BOTOTOY_2.0/runs` |
 | 3. Get the project code | Downloads the `v2-assistive` branch and installs Ultralytics | `Code version: ...` and `Ultralytics 8.4.215` |
-| 4. Prepare the dataset | Copies the ZIP from Drive and rebuilds the committed split (3–5 min) | `Split: {'train': 6329, 'val': 1568, 'test': 751}` |
-| 5. Train YOLO11n | The actual training (about 1.5–2 hours) | A progress line per epoch, up to `50/50` (it may stop earlier when it stops improving) |
+| 4. Prepare the dataset | Downloads the original dataset, copies the ZIP from Drive and rebuilds the committed combined split (6–8 min) | `Split: {'train': 13437, 'val': 2254, 'test': 1432}` |
+| 5. Train YOLO11n | The actual training (about 2 hours) | A progress line per epoch, up to `50/50` (it may stop earlier when it stops improving) |
 | 5b. Resume | **Skip** unless the session disconnected (see below) | `RESUME is False - skipping.` |
-| 6. Check and download | Shows the results and downloads the ZIP | Browser downloads `bototoy_fruit30_training_results.zip` |
+| 6. Check and download | Shows the results and downloads the ZIP | Browser downloads `bototoy_fruit31_training_results.zip` |
 
 Keep the Colab tab open while it trains. Colab disconnects tabs that are idle for a long time, so check on it
 every 20–30 minutes.
@@ -51,12 +51,12 @@ every 20–30 minutes.
 
 ## 6. Bring the result back
 
-Put `bototoy_fruit30_training_results.zip` in your Downloads folder and tell Claude, or run this in the project
+Put `bototoy_fruit31_training_results.zip` in your Downloads folder and tell Claude, or run this in the project
 folder:
 
 ```bash
-python -m src.yolo.training_report path/to/bototoy_fruit30_training_results.zip --config config/config_fruit30.yaml --out outputs/yolo_fruit30/training
+python -m src.yolo.training_report path/to/bototoy_fruit31_training_results.zip --config config/config_fruit31.yaml --out outputs/yolo_fruit31/training
 ```
 
-This verifies and installs `models/trained/bototoy_fruit30_yolo11n.pt`. The Fruit Reader then switches to the
-30-fruit model automatically the next time the app starts.
+This verifies and installs `models/trained/bototoy_fruit31_yolo11n.pt`. The Fruit Reader then switches to the
+31-fruit model automatically the next time the app starts.

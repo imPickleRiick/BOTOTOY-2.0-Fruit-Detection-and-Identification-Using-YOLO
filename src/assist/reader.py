@@ -23,17 +23,23 @@ from src.inference.image_processor import YOLO, FruitDetectionEngine, InferenceR
 from src.utils.detections import Detection, draw_detections
 from src.utils.helpers import PROJECT_ROOT, load_config, resolve_path
 
+FRUIT31_CONFIG = PROJECT_ROOT / "config" / "config_fruit31.yaml"
 FRUIT30_CONFIG = PROJECT_ROOT / "config" / "config_fruit30.yaml"
 V1_CONFIG = PROJECT_ROOT / "config" / "config.yaml"
 
 
 def reader_config() -> tuple[dict, str]:
-    """(config, model description): the 30-fruit model if its weights exist, else the 6-fruit model."""
-    cfg30 = load_config(FRUIT30_CONFIG)
-    if resolve_path(cfg30["yolo"]["trained_weights"]).is_file():
-        return cfg30, f"YOLO11n, {len(cfg30['classes'])} tropical fruits"
+    """(config, model description): the newest model whose weights are installed.
+
+    Order: combined 31-fruit model -> 30 tropical fruits -> the original 6 fruits.
+    """
+    for path, note in ((FRUIT31_CONFIG, "fruits (tropical fruits + apple and grape)"),
+                       (FRUIT30_CONFIG, "tropical fruits (no apple or grape)")):
+        cfg = load_config(path)
+        if resolve_path(cfg["yolo"]["trained_weights"]).is_file():
+            return cfg, f"YOLO11n, {len(cfg['classes'])} {note}"
     cfg = load_config(V1_CONFIG)
-    return cfg, f"YOLO11n, {len(cfg['classes'])} fruits (the 30-fruit model is not installed yet)"
+    return cfg, f"YOLO11n, {len(cfg['classes'])} fruits (the larger models are not installed)"
 
 
 @dataclass

@@ -22,6 +22,8 @@ data/processed/
 data/data.yaml
 data/processed_fruit30/
 data/fruit30.yaml
+data/processed_fruit31/
+data/fruit31.yaml
 *.cache
 
 # --- YOLO / training artifacts ---

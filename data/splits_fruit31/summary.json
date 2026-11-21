@@ -1,0 +1,186 @@
+{
+  "sources": {
+    "v1": "lightly-ai/dataset_fruits_detection @ e626559 (CC0-1.0)",
+    "v2": "Roboflow Universe trucly/fruit-5ix6x v1 (CC BY 4.0)"
+  },
+  "classes": [
+    "ambarella_fruit",
+    "avocado",
+    "banana",
+    "burmese_grape",
+    "carambola",
+    "cempedak",
+    "coconut",
+    "custard_apple",
+    "dragon_fruit",
+    "durian",
+    "grapefruit",
+    "guava",
+    "lanzones",
+    "lychee",
+    "mango",
+    "mangosteen",
+    "melon",
+    "orange",
+    "papayas",
+    "pear",
+    "persimmon",
+    "pineapple",
+    "pomegranate",
+    "rambutan",
+    "rose_apple",
+    "sapodilla",
+    "star_apple",
+    "watermelon",
+    "wood_apple",
+    "apple",
+    "grape"
+  ],
+  "renamed": {
+    "Apple": "apple",
+    "Banana": "banana",
+    "Grape": "grape",
+    "Orange": "orange",
+    "Pineapple": "pineapple",
+    "Watermelon": "watermelon",
+    "tangerines": "orange"
+  },
+  "leakage_removal": {
+    "removed": 1,
+    "cross_dataset_pairs_across_splits": 8,
+    "removed_by_split": {
+      "test": 1
+    },
+    "removed_images": {
+      "v1/valid/images/2d9d70fcb20e6c36_jpg.rf.36e303580a99c73fe93c11a7a15445a5.jpg": "near-duplicate (Hamming 4) of v2 train image"
+    }
+  },
+  "label_fixes": {
+    "boxes_clipped_or_dropped": 256
+  },
+  "final": {
+    "train": {
+      "images": 13437,
+      "images_by_source": {
+        "v1": 7108,
+        "v2": 6329
+      },
+      "boxes": 66855,
+      "boxes_per_class": {
+        "ambarella_fruit": 721,
+        "avocado": 521,
+        "banana": 3305,
+        "burmese_grape": 1275,
+        "carambola": 602,
+        "cempedak": 779,
+        "coconut": 504,
+        "custard_apple": 603,
+        "dragon_fruit": 1043,
+        "durian": 1430,
+        "grapefruit": 794,
+        "guava": 607,
+        "lanzones": 732,
+        "lychee": 1872,
+        "mango": 3749,
+        "mangosteen": 1041,
+        "melon": 588,
+        "orange": 18402,
+        "papayas": 958,
+        "pear": 701,
+        "persimmon": 915,
+        "pineapple": 3759,
+        "pomegranate": 488,
+        "rambutan": 1656,
+        "rose_apple": 1587,
+        "sapodilla": 616,
+        "star_apple": 1667,
+        "watermelon": 3250,
+        "wood_apple": 593,
+        "apple": 6070,
+        "grape": 6027
+      }
+    },
+    "val": {
+      "images": 2254,
+      "images_by_source": {
+        "v1": 686,
+        "v2": 1568
+      },
+      "boxes": 11515,
+      "boxes_per_class": {
+        "ambarella_fruit": 190,
+        "avocado": 64,
+        "banana": 385,
+        "burmese_grape": 369,
+        "carambola": 153,
+        "cempedak": 252,
+        "coconut": 102,
+        "custard_apple": 151,
+        "dragon_fruit": 354,
+        "durian": 300,
+        "grapefruit": 233,
+        "guava": 239,
+        "lanzones": 122,
+        "lychee": 548,
+        "mango": 1299,
+        "mangosteen": 287,
+        "melon": 120,
+        "orange": 1988,
+        "papayas": 176,
+        "pear": 101,
+        "persimmon": 204,
+        "pineapple": 766,
+        "pomegranate": 123,
+        "rambutan": 414,
+        "rose_apple": 387,
+        "sapodilla": 159,
+        "star_apple": 377,
+        "watermelon": 537,
+        "wood_apple": 95,
+        "apple": 448,
+        "grape": 572
+      }
+    },
+    "test": {
+      "images": 1432,
+      "images_by_source": {
+        "v1": 681,
+        "v2": 751
+      },
+      "boxes": 6858,
+      "boxes_per_class": {
+        "ambarella_fruit": 68,
+        "avocado": 34,
+        "banana": 339,
+        "burmese_grape": 183,
+        "carambola": 72,
+        "cempedak": 83,
+        "coconut": 55,
+        "custard_apple": 76,
+        "dragon_fruit": 218,
+        "durian": 141,
+        "grapefruit": 91,
+        "guava": 60,
+        "lanzones": 94,
+        "lychee": 226,
+        "mango": 750,
+        "mangosteen": 80,
+        "melon": 49,
+        "orange": 1179,
+        "papayas": 107,
+        "pear": 47,
+        "persimmon": 117,
+        "pineapple": 429,
+        "pomegranate": 31,
+        "rambutan": 174,
+        "rose_apple": 295,
+        "sapodilla": 91,
+        "star_apple": 266,
+        "watermelon": 350,
+        "wood_apple": 19,
+        "apple": 531,
+        "grape": 603
+      }
+    }
+  }
+}
