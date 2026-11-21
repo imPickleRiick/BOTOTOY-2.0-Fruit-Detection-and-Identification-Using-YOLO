@@ -7,3 +7,14 @@ gatherUsageStats = false
 
 [client]
 toolbarMode = "minimal"
+
+[theme]
+# Simple, minimal light theme: warm off-white, one green accent.
+base = "light"
+primaryColor = "#1D6B3E"
+backgroundColor = "#FAFAF7"
+secondaryBackgroundColor = "#F1F0EA"
+textColor = "#1C1F1D"
+font = "sans-serif"
+baseRadius = "large"
+showSidebarBorder = true

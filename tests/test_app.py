@@ -30,7 +30,7 @@ def test_full_app_starts_on_fruit_reader():
     at = AppTest.from_file(str(PROJECT_ROOT / "app.py"), default_timeout=TIMEOUT).run()
     assert not at.exception
     assert at.title[0].value == "Fruit Reader"
-    assert at.sidebar.radio[0].label == "Detection model"
+    assert not at.sidebar.radio  # minimal reader: the v1 detection settings stay off its sidebar
 
 
 @pytest.mark.parametrize("page", ["reader", "dashboard", "evaluation", "about", "batch", "detection", "baseline"])
