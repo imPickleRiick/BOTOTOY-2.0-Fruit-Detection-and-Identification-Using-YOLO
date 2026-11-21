@@ -1,0 +1,661 @@
+{
+  "split": "test",
+  "weights": "bototoy_fruit31_yolo11n.pt",
+  "weights_sha256": "57a494b3f0af363ec7af3a2508cc448df3f8018eb4b81b2c9e41fba00fbf4bfd",
+  "system": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.7",
+    "cpu": "AMD Ryzen 5 5600U with Radeon Graphics",
+    "cpu_threads": 12,
+    "ram_gb": 5.9,
+    "torch": "2.15.0+cpu",
+    "ultralytics": "8.4.215",
+    "cuda_available": false
+  },
+  "inference_settings": {
+    "conf": 0.25,
+    "iou": 0.7,
+    "imgsz": 640,
+    "max_det": 100,
+    "device": "cpu"
+  },
+  "ultralytics": {
+    "precision": 0.7985,
+    "recall": 0.7824,
+    "mAP50": 0.8263,
+    "mAP50-95": 0.6518,
+    "per_class": {
+      "ambarella_fruit": {
+        "precision": 0.7078,
+        "recall": 0.7794,
+        "AP50": 0.7786,
+        "AP50-95": 0.6932
+      },
+      "avocado": {
+        "precision": 0.7947,
+        "recall": 0.9412,
+        "AP50": 0.9275,
+        "AP50-95": 0.7599
+      },
+      "banana": {
+        "precision": 0.768,
+        "recall": 0.4897,
+        "AP50": 0.5764,
+        "AP50-95": 0.3616
+      },
+      "burmese_grape": {
+        "precision": 0.6457,
+        "recall": 0.4699,
+        "AP50": 0.5197,
+        "AP50-95": 0.4091
+      },
+      "carambola": {
+        "precision": 0.8368,
+        "recall": 0.9255,
+        "AP50": 0.9395,
+        "AP50-95": 0.7382
+      },
+      "cempedak": {
+        "precision": 0.8223,
+        "recall": 0.9157,
+        "AP50": 0.9557,
+        "AP50-95": 0.7303
+      },
+      "coconut": {
+        "precision": 0.638,
+        "recall": 0.7049,
+        "AP50": 0.7256,
+        "AP50-95": 0.5857
+      },
+      "custard_apple": {
+        "precision": 0.8535,
+        "recall": 0.9202,
+        "AP50": 0.9314,
+        "AP50-95": 0.725
+      },
+      "dragon_fruit": {
+        "precision": 0.894,
+        "recall": 0.844,
+        "AP50": 0.9409,
+        "AP50-95": 0.6074
+      },
+      "durian": {
+        "precision": 0.8474,
+        "recall": 0.8794,
+        "AP50": 0.9313,
+        "AP50-95": 0.6725
+      },
+      "grapefruit": {
+        "precision": 0.7668,
+        "recall": 0.9121,
+        "AP50": 0.9062,
+        "AP50-95": 0.7637
+      },
+      "guava": {
+        "precision": 0.8227,
+        "recall": 0.9167,
+        "AP50": 0.9421,
+        "AP50-95": 0.7997
+      },
+      "lanzones": {
+        "precision": 0.7894,
+        "recall": 0.7021,
+        "AP50": 0.7874,
+        "AP50-95": 0.6843
+      },
+      "lychee": {
+        "precision": 0.6774,
+        "recall": 0.6782,
+        "AP50": 0.6679,
+        "AP50-95": 0.5122
+      },
+      "mango": {
+        "precision": 0.9115,
+        "recall": 0.904,
+        "AP50": 0.9635,
+        "AP50-95": 0.7741
+      },
+      "mangosteen": {
+        "precision": 0.9056,
+        "recall": 0.925,
+        "AP50": 0.9698,
+        "AP50-95": 0.7439
+      },
+      "melon": {
+        "precision": 0.7352,
+        "recall": 0.9633,
+        "AP50": 0.9519,
+        "AP50-95": 0.8709
+      },
+      "orange": {
+        "precision": 0.7711,
+        "recall": 0.5486,
+        "AP50": 0.6719,
+        "AP50-95": 0.4711
+      },
+      "papayas": {
+        "precision": 0.8701,
+        "recall": 0.6262,
+        "AP50": 0.8297,
+        "AP50-95": 0.685
+      },
+      "pear": {
+        "precision": 0.9506,
+        "recall": 0.9574,
+        "AP50": 0.9836,
+        "AP50-95": 0.8499
+      },
+      "persimmon": {
+        "precision": 0.9494,
+        "recall": 0.9616,
+        "AP50": 0.987,
+        "AP50-95": 0.8884
+      },
+      "pineapple": {
+        "precision": 0.8309,
+        "recall": 0.7226,
+        "AP50": 0.8257,
+        "AP50-95": 0.5138
+      },
+      "pomegranate": {
+        "precision": 0.6047,
+        "recall": 0.871,
+        "AP50": 0.7809,
+        "AP50-95": 0.5975
+      },
+      "rambutan": {
+        "precision": 0.6971,
+        "recall": 0.6954,
+        "AP50": 0.7662,
+        "AP50-95": 0.5448
+      },
+      "rose_apple": {
+        "precision": 0.8307,
+        "recall": 0.8814,
+        "AP50": 0.9303,
+        "AP50-95": 0.7054
+      },
+      "sapodilla": {
+        "precision": 0.901,
+        "recall": 0.956,
+        "AP50": 0.9688,
+        "AP50-95": 0.8448
+      },
+      "star_apple": {
+        "precision": 0.9198,
+        "recall": 0.8626,
+        "AP50": 0.9259,
+        "AP50-95": 0.6761
+      },
+      "watermelon": {
+        "precision": 0.79,
+        "recall": 0.7857,
+        "AP50": 0.8288,
+        "AP50-95": 0.6738
+      },
+      "wood_apple": {
+        "precision": 0.6513,
+        "recall": 0.9474,
+        "AP50": 0.877,
+        "AP50-95": 0.7497
+      },
+      "apple": {
+        "precision": 0.7628,
+        "recall": 0.2768,
+        "AP50": 0.4271,
+        "AP50-95": 0.3062
+      },
+      "grape": {
+        "precision": 0.8058,
+        "recall": 0.2891,
+        "AP50": 0.3978,
+        "AP50-95": 0.2687
+      }
+    },
+    "speed_ms_per_image": {
+      "preprocess": 2.48,
+      "inference": 52.52,
+      "loss": 0.0,
+      "postprocess": 0.9
+    },
+    "note": "precision/recall are at the confidence that maximizes mean F1 (Ultralytics convention)"
+  },
+  "shared": {
+    "images": 1432,
+    "ap_from_all_predictions": {
+      "mean": {
+        "precision@0.5": 0.1478,
+        "recall@0.5": 0.9172,
+        "f1@0.5": 0.2462,
+        "mAP50": 0.8072,
+        "mAP50-95": 0.6414
+      },
+      "per_class": {
+        "ambarella_fruit": {
+          "AP50": 0.7051,
+          "AP50-95": 0.6306
+        },
+        "avocado": {
+          "AP50": 0.9044,
+          "AP50-95": 0.7552
+        },
+        "banana": {
+          "AP50": 0.567,
+          "AP50-95": 0.3626
+        },
+        "burmese_grape": {
+          "AP50": 0.4869,
+          "AP50-95": 0.3932
+        },
+        "carambola": {
+          "AP50": 0.9226,
+          "AP50-95": 0.7222
+        },
+        "cempedak": {
+          "AP50": 0.9421,
+          "AP50-95": 0.7311
+        },
+        "coconut": {
+          "AP50": 0.7098,
+          "AP50-95": 0.5951
+        },
+        "custard_apple": {
+          "AP50": 0.939,
+          "AP50-95": 0.7316
+        },
+        "dragon_fruit": {
+          "AP50": 0.9417,
+          "AP50-95": 0.6071
+        },
+        "durian": {
+          "AP50": 0.9256,
+          "AP50-95": 0.6656
+        },
+        "grapefruit": {
+          "AP50": 0.8905,
+          "AP50-95": 0.7549
+        },
+        "guava": {
+          "AP50": 0.916,
+          "AP50-95": 0.7659
+        },
+        "lanzones": {
+          "AP50": 0.671,
+          "AP50-95": 0.5932
+        },
+        "lychee": {
+          "AP50": 0.6306,
+          "AP50-95": 0.4866
+        },
+        "mango": {
+          "AP50": 0.961,
+          "AP50-95": 0.7769
+        },
+        "mangosteen": {
+          "AP50": 0.9769,
+          "AP50-95": 0.7606
+        },
+        "melon": {
+          "AP50": 0.956,
+          "AP50-95": 0.8773
+        },
+        "orange": {
+          "AP50": 0.6524,
+          "AP50-95": 0.4632
+        },
+        "papayas": {
+          "AP50": 0.7685,
+          "AP50-95": 0.6418
+        },
+        "pear": {
+          "AP50": 0.9855,
+          "AP50-95": 0.8607
+        },
+        "persimmon": {
+          "AP50": 0.9871,
+          "AP50-95": 0.8878
+        },
+        "pineapple": {
+          "AP50": 0.7828,
+          "AP50-95": 0.4985
+        },
+        "pomegranate": {
+          "AP50": 0.8625,
+          "AP50-95": 0.6421
+        },
+        "rambutan": {
+          "AP50": 0.7115,
+          "AP50-95": 0.5009
+        },
+        "rose_apple": {
+          "AP50": 0.9217,
+          "AP50-95": 0.7006
+        },
+        "sapodilla": {
+          "AP50": 0.9684,
+          "AP50-95": 0.857
+        },
+        "star_apple": {
+          "AP50": 0.9024,
+          "AP50-95": 0.6678
+        },
+        "watermelon": {
+          "AP50": 0.8318,
+          "AP50-95": 0.6841
+        },
+        "wood_apple": {
+          "AP50": 0.8099,
+          "AP50-95": 0.7051
+        },
+        "apple": {
+          "AP50": 0.4086,
+          "AP50-95": 0.2994
+        },
+        "grape": {
+          "AP50": 0.3826,
+          "AP50-95": 0.264
+        }
+      }
+    },
+    "operating_point": {
+      "confidence": 0.25,
+      "iou_nms": 0.7,
+      "mean": {
+        "precision@0.5": 0.7267,
+        "recall@0.5": 0.8093,
+        "f1@0.5": 0.755
+      },
+      "per_class": {
+        "ambarella_fruit": {
+          "ground_truth": 68,
+          "predictions": 76,
+          "precision@0.5": 0.6579,
+          "recall@0.5": 0.7353,
+          "f1@0.5": 0.6944
+        },
+        "avocado": {
+          "ground_truth": 34,
+          "predictions": 52,
+          "precision@0.5": 0.6154,
+          "recall@0.5": 0.9412,
+          "f1@0.5": 0.7442
+        },
+        "banana": {
+          "ground_truth": 338,
+          "predictions": 255,
+          "precision@0.5": 0.6902,
+          "recall@0.5": 0.5207,
+          "f1@0.5": 0.5936
+        },
+        "burmese_grape": {
+          "ground_truth": 183,
+          "predictions": 131,
+          "precision@0.5": 0.6565,
+          "recall@0.5": 0.4699,
+          "f1@0.5": 0.5478
+        },
+        "carambola": {
+          "ground_truth": 72,
+          "predictions": 82,
+          "precision@0.5": 0.8171,
+          "recall@0.5": 0.9306,
+          "f1@0.5": 0.8701
+        },
+        "cempedak": {
+          "ground_truth": 83,
+          "predictions": 122,
+          "precision@0.5": 0.6557,
+          "recall@0.5": 0.9639,
+          "f1@0.5": 0.7805
+        },
+        "coconut": {
+          "ground_truth": 55,
+          "predictions": 73,
+          "precision@0.5": 0.5479,
+          "recall@0.5": 0.7273,
+          "f1@0.5": 0.625
+        },
+        "custard_apple": {
+          "ground_truth": 76,
+          "predictions": 84,
+          "precision@0.5": 0.8333,
+          "recall@0.5": 0.9211,
+          "f1@0.5": 0.875
+        },
+        "dragon_fruit": {
+          "ground_truth": 218,
+          "predictions": 250,
+          "precision@0.5": 0.808,
+          "recall@0.5": 0.9266,
+          "f1@0.5": 0.8632
+        },
+        "durian": {
+          "ground_truth": 141,
+          "predictions": 177,
+          "precision@0.5": 0.7288,
+          "recall@0.5": 0.9149,
+          "f1@0.5": 0.8113
+        },
+        "grapefruit": {
+          "ground_truth": 91,
+          "predictions": 117,
+          "precision@0.5": 0.7094,
+          "recall@0.5": 0.9121,
+          "f1@0.5": 0.7981
+        },
+        "guava": {
+          "ground_truth": 60,
+          "predictions": 85,
+          "precision@0.5": 0.6824,
+          "recall@0.5": 0.9667,
+          "f1@0.5": 0.8
+        },
+        "lanzones": {
+          "ground_truth": 94,
+          "predictions": 99,
+          "precision@0.5": 0.6667,
+          "recall@0.5": 0.7021,
+          "f1@0.5": 0.6839
+        },
+        "lychee": {
+          "ground_truth": 226,
+          "predictions": 256,
+          "precision@0.5": 0.5859,
+          "recall@0.5": 0.6637,
+          "f1@0.5": 0.6224
+        },
+        "mango": {
+          "ground_truth": 750,
+          "predictions": 832,
+          "precision@0.5": 0.8594,
+          "recall@0.5": 0.9533,
+          "f1@0.5": 0.9039
+        },
+        "mangosteen": {
+          "ground_truth": 80,
+          "predictions": 96,
+          "precision@0.5": 0.8229,
+          "recall@0.5": 0.9875,
+          "f1@0.5": 0.8977
+        },
+        "melon": {
+          "ground_truth": 49,
+          "predictions": 62,
+          "precision@0.5": 0.7742,
+          "recall@0.5": 0.9796,
+          "f1@0.5": 0.8649
+        },
+        "orange": {
+          "ground_truth": 1179,
+          "predictions": 1079,
+          "precision@0.5": 0.6599,
+          "recall@0.5": 0.6039,
+          "f1@0.5": 0.6306
+        },
+        "papayas": {
+          "ground_truth": 107,
+          "predictions": 89,
+          "precision@0.5": 0.8202,
+          "recall@0.5": 0.6822,
+          "f1@0.5": 0.7449
+        },
+        "pear": {
+          "ground_truth": 47,
+          "predictions": 47,
+          "precision@0.5": 0.9574,
+          "recall@0.5": 0.9574,
+          "f1@0.5": 0.9574
+        },
+        "persimmon": {
+          "ground_truth": 117,
+          "predictions": 129,
+          "precision@0.5": 0.8992,
+          "recall@0.5": 0.9915,
+          "f1@0.5": 0.9431
+        },
+        "pineapple": {
+          "ground_truth": 429,
+          "predictions": 460,
+          "precision@0.5": 0.713,
+          "recall@0.5": 0.7646,
+          "f1@0.5": 0.7379
+        },
+        "pomegranate": {
+          "ground_truth": 31,
+          "predictions": 44,
+          "precision@0.5": 0.6364,
+          "recall@0.5": 0.9032,
+          "f1@0.5": 0.7467
+        },
+        "rambutan": {
+          "ground_truth": 174,
+          "predictions": 194,
+          "precision@0.5": 0.6237,
+          "recall@0.5": 0.6954,
+          "f1@0.5": 0.6576
+        },
+        "rose_apple": {
+          "ground_truth": 295,
+          "predictions": 357,
+          "precision@0.5": 0.7591,
+          "recall@0.5": 0.9186,
+          "f1@0.5": 0.8313
+        },
+        "sapodilla": {
+          "ground_truth": 91,
+          "predictions": 104,
+          "precision@0.5": 0.8365,
+          "recall@0.5": 0.956,
+          "f1@0.5": 0.8923
+        },
+        "star_apple": {
+          "ground_truth": 266,
+          "predictions": 279,
+          "precision@0.5": 0.853,
+          "recall@0.5": 0.8947,
+          "f1@0.5": 0.8734
+        },
+        "watermelon": {
+          "ground_truth": 350,
+          "predictions": 416,
+          "precision@0.5": 0.7091,
+          "recall@0.5": 0.8429,
+          "f1@0.5": 0.7702
+        },
+        "wood_apple": {
+          "ground_truth": 19,
+          "predictions": 31,
+          "precision@0.5": 0.6129,
+          "recall@0.5": 1.0,
+          "f1@0.5": 0.76
+        },
+        "apple": {
+          "ground_truth": 531,
+          "predictions": 260,
+          "precision@0.5": 0.6577,
+          "recall@0.5": 0.322,
+          "f1@0.5": 0.4324
+        },
+        "grape": {
+          "ground_truth": 603,
+          "predictions": 301,
+          "precision@0.5": 0.6777,
+          "recall@0.5": 0.3383,
+          "f1@0.5": 0.4513
+        }
+      },
+      "localization_recall@0.5": 0.7268,
+      "counting": {
+        "mean_absolute_count_error": 1.82,
+        "mean_signed_count_error": -0.152,
+        "exact_count_rate": 0.4825
+      }
+    },
+    "timing_ms": {
+      "model_stages_mean": {
+        "preprocess": 1.74,
+        "inference": 50.47,
+        "postprocess": 1.23
+      },
+      "end_to_end_mean": 60.9,
+      "end_to_end_median": 58.7,
+      "end_to_end_p95": 84.5,
+      "note": "end-to-end = read image + preprocess + inference + NMS + draw boxes, batch size 1, CPU, after one warm-up image"
+    },
+    "error_examples": {
+      "tp": 6,
+      "fp": 6,
+      "fn": 6
+    }
+  },
+  "targets": {
+    "mAP50 >= 0.80": {
+      "value": 0.8263,
+      "met": true
+    },
+    "mAP50-95 >= 0.50": {
+      "value": 0.6518,
+      "met": true
+    },
+    "recall >= 0.70 for every class": {
+      "value": {
+        "ambarella_fruit": 0.7794,
+        "avocado": 0.9412,
+        "banana": 0.4897,
+        "burmese_grape": 0.4699,
+        "carambola": 0.9255,
+        "cempedak": 0.9157,
+        "coconut": 0.7049,
+        "custard_apple": 0.9202,
+        "dragon_fruit": 0.844,
+        "durian": 0.8794,
+        "grapefruit": 0.9121,
+        "guava": 0.9167,
+        "lanzones": 0.7021,
+        "lychee": 0.6782,
+        "mango": 0.904,
+        "mangosteen": 0.925,
+        "melon": 0.9633,
+        "orange": 0.5486,
+        "papayas": 0.6262,
+        "pear": 0.9574,
+        "persimmon": 0.9616,
+        "pineapple": 0.7226,
+        "pomegranate": 0.871,
+        "rambutan": 0.6954,
+        "rose_apple": 0.8814,
+        "sapodilla": 0.956,
+        "star_apple": 0.8626,
+        "watermelon": 0.7857,
+        "wood_apple": 0.9474,
+        "apple": 0.2768,
+        "grape": 0.2891
+      },
+      "met": false
+    },
+    "end-to-end <= 1 s per image": {
+      "value_seconds": 0.061,
+      "met": true
+    }
+  }
+}
