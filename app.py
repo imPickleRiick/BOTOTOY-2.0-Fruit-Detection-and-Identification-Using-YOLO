@@ -19,15 +19,19 @@ if __name__ == "__main__" and get_script_run_ctx(suppress_warning=True) is None:
     sys.exit(cli.main())
 
 from src.app.common import PAGES, get_engine, render_sidebar
-from src.app.pages import about, baseline, batch, dashboard, detection, evaluation, yolo
+from src.app.pages import about, baseline, batch, dashboard, detection, evaluation, reader, yolo
 
-st.set_page_config(page_title="BOTOTOY 2.0 | Fruit Detection", page_icon=":material/nutrition:", layout="wide")
+st.set_page_config(page_title="BOTOTOY 2.0 | Fruit Reader", page_icon=":material/nutrition:", layout="wide")
 
 engine = get_engine()
 
 pages = {
+    "Assistive reader": [
+        st.Page(reader.render, title="Fruit Reader", icon=":material/record_voice_over:", url_path="reader",
+                default=True),
+    ],
     "Overview": [
-        st.Page(dashboard.render, title="Dashboard", icon=":material/dashboard:", url_path="dashboard", default=True),
+        st.Page(dashboard.render, title="Dashboard", icon=":material/dashboard:", url_path="dashboard"),
     ],
     "Detect fruits": [
         st.Page(detection.render, title="Fruit Detection", icon=":material/image_search:", url_path="detect"),

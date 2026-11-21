@@ -59,6 +59,20 @@ def draw_detections(image: np.ndarray, dets: list[Detection], show_confidence: b
     th = thickness or max(2, round(longest / 400))
     font_scale = max(0.5, longest / 1280)  # 0.5 up to 1280 px, then grows with the image
     for d in dets:
-        label = f"{d.class_name} {d.confidence:.2f}" if show_confidence else d.class_name
-        draw_box(out, d.box, label, CLASS_COLORS_BGR.get(d.class_name, DEFAULT_COLOR_BGR), th, font_scale)
+        name = d.extra.get("label", d.class_name)  # optional readable label, e.g. "Mango (mangga)"
+        label = f"{name} {d.confidence:.2f}" if show_confidence else name
+        draw_box(out, d.box, label, class_color(d.class_name), th, font_scale)
     return out
+
+
+def class_color(class_name: str) -> tuple[int, int, int]:
+    """Fixed color for the 6 v1 classes; any other class gets a stable, saturated color from its name."""
+    if class_name in CLASS_COLORS_BGR:
+        return CLASS_COLORS_BGR[class_name]
+    if not class_name:
+        return DEFAULT_COLOR_BGR
+    import colorsys
+    import zlib
+    hue = (zlib.crc32(class_name.encode("utf-8")) % 360) / 360.0
+    r, g, b = colorsys.hsv_to_rgb(hue, 0.85, 0.85)
+    return int(b * 255), int(g * 255), int(r * 255)

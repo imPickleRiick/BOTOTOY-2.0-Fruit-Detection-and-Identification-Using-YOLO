@@ -26,14 +26,14 @@ def metric(at: AppTest, label: str) -> str:
     return next(m.value for m in at.metric if m.label == label)
 
 
-def test_full_app_starts_on_dashboard():
+def test_full_app_starts_on_fruit_reader():
     at = AppTest.from_file(str(PROJECT_ROOT / "app.py"), default_timeout=TIMEOUT).run()
     assert not at.exception
-    assert at.title[0].value == "BOTOTOY 2.0"
+    assert at.title[0].value == "Fruit Reader"
     assert at.sidebar.radio[0].label == "Detection model"
 
 
-@pytest.mark.parametrize("page", ["evaluation", "about", "batch", "detection", "baseline"])
+@pytest.mark.parametrize("page", ["reader", "dashboard", "evaluation", "about", "batch", "detection", "baseline"])
 def test_pages_render_without_input(page):
     at = run_page(page)
     assert not at.exception, at.exception
