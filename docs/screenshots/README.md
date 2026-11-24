@@ -29,12 +29,14 @@ uploads of photos from `assets/unseen/` (Wikimedia Commons; the model never saw 
 
 ## v2: assistive Fruit Reader
 
-Captured on 22 Nov 2026 with the 31-fruit model, in Chrome on the team laptop. The live-reader screenshot uses
-Chrome's simulated phone screen and a fake camera that plays a video of `mandarins_on_plate.jpg`.
+Captured on 24 Nov 2026 with the 31-fruit model and the minimal design, in Chrome on the team laptop. The
+live-reader screenshot uses Chrome's simulated phone screen and a fake camera that plays a video of
+`mandarins_on_plate.jpg`.
 
 | File | What it shows |
 |---|---|
-| [`v2_01_reader_photo.png`](v2_01_reader_photo.png) | Fruit Reader with an uploaded photo: the spoken sentence ("I see 3 oranges (dalandan): 1 on the left, 1 in the middle and 1 on the right."), the replay button and the labeled boxes for a sighted helper |
+| [`v2_01_reader_photo.png`](v2_01_reader_photo.png) | Photo mode with an uploaded photo: the spoken sentence ("I see 3 oranges (dalandan): 1 on the left, 1 in the middle and 1 on the right."), the Read again button and the labeled boxes for a sighted helper |
 | [`v2_02_quality_warning.png`](v2_02_quality_warning.png) | A dark photo: the reader first says what is wrong with the photo, then still names the banana |
-| [`v2_03_phone_panel.png`](v2_03_phone_panel.png) | "Use your phone camera": QR code and steps to open the reader on a phone |
-| [`v2_04_live_reader_phone.png`](v2_04_live_reader_phone.png) | Live reader on a phone screen: boxes over the camera view, Stop / Say it again, the sentence it spoke |
+| [`v2_03_phone_panel.png`](v2_03_phone_panel.png) | The Settings button: speech options, minimum confidence and the QR code to open the reader on a phone |
+| [`v2_04_live_reader_phone.png`](v2_04_live_reader_phone.png) | Live mode on a phone screen: thin boxes over the camera view, the sentence it spoke, Stop and Repeat |
+| [`v2_05_dashboard.png`](v2_05_dashboard.png) | Dashboard: model status, main results, how the reader works and the per-fruit naming chart |

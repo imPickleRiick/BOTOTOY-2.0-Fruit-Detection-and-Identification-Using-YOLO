@@ -106,8 +106,9 @@ user needs, and we report the v1 accuracy targets for reference.
 | Training data | 8,479 images, one dataset | 17,123 images, two datasets merged |
 | Test-set mAP@0.50 | 0.490 (682 images) | 0.826 (1,432 images) |
 
-The v1 pages (Fruit Detection, Batch Detection, YOLO11n Model, OpenCV Baseline, Model Evaluation) are still in
-the app. The Fruit Reader is now the start page.
+The app opens on the Fruit Reader. The Dashboard and About pages describe the 31-fruit model (Appendix A.5). The
+v1 pages (Fruit Detection, Batch Detection, YOLO11n Model, OpenCV Baseline, Model Evaluation) are kept under a
+"Version 1 (6 fruits)" menu section, each marked at the top as the original 6-fruit detector, for comparison.
 
 ## 4. Data
 
@@ -222,8 +223,8 @@ the most reliable information is heard first:
 ### 5.4 Step 4: speaking, and the live reader
 
 **Speech.** The sentence is spoken by the phone's own browser speech engine (Web Speech API), so no audio is
-sent over the network. It plays automatically, there is a large "Read aloud again" button, and the text is also
-placed in an ARIA live region so screen readers (TalkBack, VoiceOver) announce it. Speech speed can be changed.
+sent over the network. It plays automatically, there are large "Read again" (photo) and "Repeat" (live) buttons,
+and the text is also placed in an ARIA live region so screen readers (TalkBack, VoiceOver) announce it. Speech speed can be changed.
 
 **Live reader** (`src/app/components/live_camera/`, `src/assist/live.py`). The phone sends one camera frame at a
 time, waiting for the previous answer, so a slow network never builds up a queue (about 1.5 frames per second
@@ -237,8 +238,8 @@ In a browser test with a simulated phone camera, the first sentence was spoken 2
 
 ### 5.5 Getting the phone camera into the app
 
-The laptop runs the app; the phone opens it in its browser by scanning a QR code shown on the "Use your phone
-camera" panel (Appendix A.3). Browsers allow camera access only on secure (`https`) pages, and Streamlit's own
+The laptop runs the app; the phone opens it in its browser by scanning a QR code shown under **Settings**
+(Appendix A.3). Browsers allow camera access only on secure (`https`) pages, and Streamlit's own
 HTTPS mode failed on Windows, so we added:
 - `src/assist/https_cert.py`: creates a self-signed certificate for the laptop's network address (OpenSSL);
 - `src/assist/https_proxy.py`: a small TLS proxy that forwards `https://<laptop>:9443` to the app.
@@ -246,6 +247,20 @@ HTTPS mode failed on Windows, so we added:
 `python app.py --https` starts both. The phone shows a one-time "not private" warning because the certificate
 is self-signed. On some routers, devices on the same Wi-Fi cannot reach each other ("AP isolation"); connecting
 the laptop to the phone's **hotspot** solves this, and is what we use for demonstrations.
+
+### 5.6 A minimal screen
+
+The reader page is deliberately simple, so it is easy to use with a screen reader or with low vision, and quick
+for a sighted helper to set up:
+- one screen: the title, one line of instructions, a **Live / Photo** switch and one **Settings** button;
+- Settings holds the speech options (Filipino names, automatic reading, speed), the minimum confidence and the
+  QR code for a phone;
+- live view: the camera with thin boxes in one color, the current sentence in large text, and two large buttons
+  (Stop, Repeat);
+- photo view: the spoken sentence in a card, a Read again button and the photo with its boxes;
+- a light theme with one green accent; the sidebar with the v1 settings is hidden on this page.
+
+The accessibility features stay: large touch targets, automatic speech and screen-reader announcements.
 
 ## 6. Evaluation
 
@@ -500,26 +515,32 @@ The trained weights (`models/trained/bototoy_fruit31_yolo11n.pt`, 5.5 MB) and ev
 
 ## Appendix A: Screenshots
 
-All screenshots are of the running app with the 31-fruit model (22 Nov 2026), using photos the model never saw
+All screenshots are of the running app with the 31-fruit model (24 Nov 2026), using photos the model never saw
 in training. Files: [`docs/screenshots/`](screenshots/).
 
-![Fruit Reader](screenshots/v2_01_reader_photo.png)
+<img src="screenshots/v2_01_reader_photo.png" alt="Fruit Reader in photo mode" style="max-height:190mm">
 
-**A.1 Fruit Reader with an uploaded photo.** The sentence is spoken automatically; the boxes are for a sighted
-helper.
+**A.1 Fruit Reader, Photo mode.** The sentence is spoken automatically and shown in a card, with a Read again
+button; the boxes are for a sighted helper.
 
-![Quality warning](screenshots/v2_02_quality_warning.png)
+<img src="screenshots/v2_02_quality_warning.png" alt="Quality warning on a dark photo" style="max-height:170mm">
 
 **A.2 A dark photo.** The reader first says what is wrong, then still names the banana.
 
-![Phone panel](screenshots/v2_03_phone_panel.png)
+<img src="screenshots/v2_03_phone_panel.png" alt="Settings panel with the QR code" style="max-height:170mm">
 
-**A.3 Opening the reader on a phone.** QR code and steps.
+**A.3 The Settings button.** Speech options, minimum confidence and the QR code to open the reader on a phone.
 
 <img src="screenshots/v2_04_live_reader_phone.png" alt="Live reader on a phone" style="max-height:170mm">
 
-**A.4 Live reader on a phone screen.** Boxes follow the camera view; the last sentence is shown under the
-buttons. (Chrome's phone simulation with a fake camera showing the mandarins photo.)
+**A.4 Live mode on a phone screen.** Thin boxes follow the camera view; the sentence it spoke is shown in large
+text above the Stop and Repeat buttons. (Chrome's phone simulation with a fake camera showing the mandarins
+photo.)
+
+![Dashboard](screenshots/v2_05_dashboard.png)
+
+**A.5 Dashboard.** Model status and the main results, how the reader works, and the share of test photos in
+which the reader names each fruit.
 
 ## Appendix B: Per-fruit results (31-fruit model, locked test set)
 
